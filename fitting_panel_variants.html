@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fittings Panel — Design Variants</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --sans: 'IBM Plex Sans', system-ui, sans-serif;
+  --mono: 'IBM Plex Mono', monospace;
+
+  --text-primary:   #1A1A18;
+  --text-secondary: #5F5E5A;
+  --text-tertiary:  #888780;
+  --bg-primary:     #FFFFFF;
+  --bg-secondary:   #F6F5F2;
+  --bg-page:        #EDECEA;
+  --border:         rgba(0,0,0,0.11);
+  --border-md:      rgba(0,0,0,0.20);
+
+  /* System colours — mirrors canvas node colours from wireframe */
+  --sys-vantor:  #52A688;
+  --sys-helix:   #C4966A;
+  --sys-stratus: #D96B6B;
+  --sys-aurex:   #9490C2;
+
+  /* Search highlight — reuses Routine blue */
+  --hl-bg:   #E6F1FB;
+  --hl-text: #185FA5;
+
+  /* Recommended tag */
+  --rec-bg:   #E6F1FB;
+  --rec-text: #185FA5;
+}
+
+body {
+  font-family: var(--sans);
+  background: var(--bg-page);
+  color: var(--text-primary);
+  padding: 44px 36px 96px;
+}
+.page { max-width: 1460px; margin: 0 auto; }
+
+/* ── PAGE HEADING ── */
+.page-heading {
+  margin-bottom: 52px;
+  padding-bottom: 20px;
+  border-bottom: 0.5px solid var(--border-md);
+}
+.page-heading h1 {
+  font-size: 14px; font-weight: 500; color: var(--text-primary);
+  margin-bottom: 5px; letter-spacing: -0.01em;
+}
+.page-heading p {
+  font-family: var(--mono); font-size: 11px;
+  color: var(--text-tertiary); letter-spacing: 0.03em;
+}
+
+/* ── SECTIONS ── */
+.pattern-section { margin-bottom: 72px; }
+
+.section-head {
+  display: flex; align-items: flex-start;
+  gap: 12px; margin-bottom: 22px;
+}
+.section-letter {
+  font-family: var(--mono); font-size: 10px; font-weight: 500;
+  color: var(--text-tertiary); background: var(--bg-secondary);
+  border: 0.5px solid var(--border-md); border-radius: 4px;
+  padding: 2px 6px; letter-spacing: 0.06em;
+  flex-shrink: 0; margin-top: 2px;
+}
+.section-letter.star {
+  color: var(--hl-text); background: var(--hl-bg);
+  border-color: #B5D4F4;
+}
+.section-head h2 {
+  font-size: 13px; font-weight: 500; color: var(--text-primary); margin-bottom: 3px;
+}
+.section-tradeoff {
+  font-family: var(--mono); font-size: 10px;
+  color: var(--text-tertiary); letter-spacing: 0.02em; line-height: 1.7;
+}
+.rec-tag {
+  font-family: var(--mono); font-size: 9px; font-weight: 500;
+  color: var(--rec-text); background: var(--rec-bg);
+  border: 0.5px solid #B5D4F4; border-radius: 3px;
+  padding: 1px 5px; letter-spacing: 0.04em;
+  vertical-align: middle; margin-left: 7px;
+}
+
+.panel-row { display: flex; gap: 24px; align-items: flex-start; flex-wrap: wrap; }
+
+/* ── PANEL COLUMNS ── */
+.panel-col { display: flex; flex-direction: column; }
+.panel-label {
+  font-family: var(--mono); font-size: 10px; font-weight: 500;
+  color: var(--text-tertiary); text-transform: uppercase;
+  letter-spacing: 0.08em; margin-bottom: 8px;
+}
+.panel-note {
+  font-family: var(--mono); font-size: 10px; color: var(--text-tertiary);
+  letter-spacing: 0.02em; line-height: 1.7; max-width: 315px; margin-top: 10px;
+}
+
+/* ── PANEL FRAME ── */
+.panel-frame {
+  width: 315px;
+  background: var(--bg-primary);
+  border: 0.5px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+}
+.panel-frame.overflow-vis {
+  overflow: visible;
+}
+/* Ensure rounded corners even with overflow:visible by adding inner clip wrapper */
+.panel-inner {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* ── PANEL CHROME ── */
+.panel-chrome {
+  display: flex; align-items: center;
+  padding: 9px 12px 8px;
+  border-bottom: 0.5px solid var(--border);
+  background: var(--bg-primary);
+}
+.chrome-title {
+  font-family: var(--mono); font-size: 11px; font-weight: 500;
+  color: var(--text-primary); letter-spacing: 0.04em;
+}
+
+/* ── TOOLBAR ── */
+.toolbar {
+  padding: 7px 10px;
+  border-bottom: 0.5px solid var(--border);
+  display: flex; flex-direction: column; gap: 5px;
+  background: var(--bg-primary);
+}
+.search-row {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--bg-secondary);
+  border: 0.5px solid var(--border);
+  border-radius: 6px; padding: 0 9px; height: 28px;
+}
+.search-row input {
+  flex: 1; border: none; background: transparent;
+  font-size: 12px; font-family: var(--sans);
+  color: var(--text-primary); outline: none;
+}
+.search-row input::placeholder { color: var(--text-tertiary); }
+.search-icon { font-size: 13px; color: var(--text-tertiary); line-height: 1; }
+.search-clear {
+  font-size: 13px; color: var(--text-tertiary); cursor: pointer;
+  line-height: 1; flex-shrink: 0;
+}
+
+.filter-bar {
+  display: flex; align-items: center; gap: 6px;
+}
+.result-count {
+  font-family: var(--mono); font-size: 10px; color: var(--text-tertiary); flex: 1;
+}
+
+/* ── SYSTEMS BUTTON (2B) ── */
+.sys-btn {
+  display: flex; align-items: center; gap: 5px;
+  font-family: var(--sans); font-size: 11px; color: var(--text-secondary);
+  border: 0.5px solid var(--border-md); border-radius: 5px;
+  padding: 3px 8px; background: var(--bg-primary); cursor: pointer;
+  white-space: nowrap; flex-shrink: 0;
+}
+.sys-btn.active { border-color: rgba(0,0,0,0.30); }
+.btn-dots { display: flex; gap: 3px; align-items: center; }
+.btn-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.btn-dot.vantor  { background: var(--sys-vantor); }
+.btn-dot.stratus { background: var(--sys-stratus); }
+.btn-dot.helix   { background: var(--sys-helix); }
+.btn-dot.aurex   { background: var(--sys-aurex); }
+.btn-caret { font-size: 9px; color: var(--text-tertiary); }
+
+/* ── CHIP FILTER (2A) ── */
+.chip-row { display: flex; flex-wrap: wrap; gap: 4px; }
+.chip {
+  display: flex; align-items: center; gap: 4px;
+  font-family: var(--mono); font-size: 10px; color: var(--text-secondary);
+  border: 0.5px solid var(--border); border-radius: 4px;
+  padding: 2px 6px 2px 5px; background: var(--bg-primary); cursor: pointer;
+  white-space: nowrap;
+}
+.chip.active {
+  background: #EAF6F1; border-color: #8FCFB7; color: #2E7A5E;
+}
+.chip-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.chip-x { font-size: 11px; color: #52A688; margin-left: 1px; line-height: 1; }
+.chip-more {
+  font-family: var(--mono); font-size: 10px; color: var(--text-tertiary);
+  border: 0.5px solid var(--border); border-radius: 4px;
+  padding: 2px 7px; background: var(--bg-secondary); cursor: pointer;
+}
+
+/* ── SC-PILL ROW (2C) ── */
+.sc-pill-row { display: flex; flex-wrap: wrap; gap: 4px; }
+.sc-pill {
+  display: flex; align-items: center; gap: 5px;
+  padding: 3px 8px 3px 6px; border-radius: 4px; border: 0.5px solid;
+  cursor: pointer; font-size: 11px; font-family: var(--mono);
+  font-weight: 500; white-space: nowrap; transition: opacity 0.1s;
+}
+.sc-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.sc-pill.dimmed { opacity: 0.35; }
+.sc-pill.vantor  { background: #EAF6F1; border-color: #8FCFB7; color: #2E7A5E; }
+.sc-pill.helix   { background: #FBF2E8; border-color: #E8BC87; color: #8A5E2A; }
+.sc-pill.stratus { background: #FCEAEA; border-color: #EDAAAA; color: #A03030; }
+.sc-pill.aurex   { background: #F0EFF9; border-color: #C0BEDB; color: #5C5A8A; }
+.sc-pill.extra   { background: var(--bg-secondary); border-color: var(--border-md); color: var(--text-tertiary); }
+.overflow-note {
+  font-family: var(--mono); font-size: 10px; color: var(--text-tertiary);
+  padding: 3px 0 1px; border-top: 0.5px dashed var(--border);
+  letter-spacing: 0.02em;
+}
+
+/* ── POPOVER (2B) ── */
+.popover {
+  position: absolute;
+  top: 82px; right: 10px;
+  width: 205px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-md);
+  border-radius: 8px;
+  overflow: hidden;
+  z-index: 10;
+}
+.pop-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 7px 10px 6px;
+  border-bottom: 0.5px solid var(--border);
+  background: var(--bg-secondary);
+}
+.pop-header-label {
+  font-family: var(--mono); font-size: 10px; font-weight: 500;
+  color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.07em;
+}
+.pop-clear {
+  font-size: 11px; color: var(--hl-text); cursor: pointer; font-family: var(--sans);
+}
+.pop-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 10px;
+  border-bottom: 0.5px solid var(--border);
+  cursor: pointer;
+}
+.pop-row:last-child { border-bottom: none; }
+.pop-row:hover { background: var(--bg-secondary); }
+.pop-cb {
+  width: 12px; height: 12px; border-radius: 2px;
+  border: 0.5px solid var(--border-md); background: var(--bg-primary);
+  flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+}
+.pop-cb.checked {
+  background: var(--text-primary); border-color: var(--text-primary);
+}
+.pop-cb.checked::after { content: '✓'; font-size: 8px; color: white; }
+.pop-sys-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.pop-sys-name { font-size: 11px; color: var(--text-primary); flex: 1; font-family: var(--sans); }
+.pop-more {
+  font-family: var(--mono); font-size: 10px; color: var(--text-tertiary);
+  padding: 6px 10px;
+  background: var(--bg-secondary);
+  border-top: 0.5px solid var(--border);
+  text-align: center;
+}
+
+/* ── PANEL LIST ── */
+.panel-list { background: var(--bg-primary); }
+
+/* ── 3-LEVEL TREE (panels 1A, 2A, 2B, 2C) ── */
+.sys-group {}
+.sys-group + .sys-group { border-top: 0.5px solid var(--border); }
+
+.sys-hdr {
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 12px; cursor: pointer; user-select: none;
+}
+.sys-hdr:hover { background: var(--bg-secondary); }
+.sys-chev {
+  font-size: 9px; color: var(--text-tertiary); width: 10px; flex-shrink: 0;
+  transition: transform 0.12s;
+}
+.sys-chev.coll { transform: rotate(-90deg); }
+.sys-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.sys-dot.vantor  { background: var(--sys-vantor); }
+.sys-dot.helix   { background: var(--sys-helix); }
+.sys-dot.stratus { background: var(--sys-stratus); }
+.sys-dot.aurex   { background: var(--sys-aurex); }
+.sys-name {
+  font-size: 12px; font-weight: 500; color: var(--text-primary);
+  flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.sys-ct {
+  font-family: var(--mono); font-size: 10px; color: var(--text-tertiary); flex-shrink: 0;
+}
+
+.fn-group {}
+.fn-hdr {
+  display: flex; align-items: center; gap: 5px;
+  padding: 4px 12px 4px 26px; cursor: pointer; user-select: none;
+}
+.fn-hdr:hover { background: var(--bg-secondary); }
+.fn-chev { font-size: 8px; color: var(--text-tertiary); width: 10px; flex-shrink: 0; transition: transform 0.12s; }
+.fn-chev.coll { transform: rotate(-90deg); }
+.fn-name { font-size: 11px; color: var(--text-secondary); flex: 1; }
+.fn-ct   { font-family: var(--mono); font-size: 10px; color: var(--text-tertiary); }
+
+.fit-3 {
+  display: flex; align-items: center; gap: 6px;
+  padding: 4px 12px 4px 44px; cursor: pointer;
+}
+.fit-3:hover { background: var(--bg-secondary); }
+.fit-id {
+  font-family: var(--mono); font-size: 11px; color: var(--text-secondary); flex-shrink: 0;
+}
+.fit-name { font-size: 12px; color: var(--text-primary); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ── 2-LEVEL TREE (3B, combined rec) ── */
+.sys-hdr-2 {
+  display: flex; align-items: center; gap: 6px;
+  padding: 7px 12px; cursor: pointer; user-select: none;
+  border-bottom: 0.5px solid var(--border);
+}
+.sys-hdr-2:hover { background: var(--bg-secondary); }
+
+.fit-2 {
+  display: flex; align-items: center; gap: 6px;
+  padding: 5px 12px 5px 28px; cursor: pointer;
+  border-bottom: 0.5px solid var(--border);
+}
+.fit-2:last-child { border-bottom: none; }
+.fit-2:hover { background: var(--bg-secondary); }
+.fit-fn-tag {
+  font-family: var(--mono); font-size: 10px; color: var(--text-tertiary);
+  border: 0.5px solid var(--border); border-radius: 3px;
+  padding: 1px 5px; background: var(--bg-secondary); flex-shrink: 0;
+}
+.sys-body-2 { }
+
+/* ── FLAT LIST (3A) ── */
+.flat-row {
+  display: flex; align-items: flex-start; gap: 8px;
+  padding: 7px 12px; border-bottom: 0.5px solid var(--border); cursor: pointer;
+}
+.flat-row:last-child { border-bottom: none; }
+.flat-row:hover { background: var(--bg-secondary); }
+.flat-dot {
+  width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; margin-top: 4px;
+}
+.flat-dot.vantor  { background: var(--sys-vantor); }
+.flat-dot.helix   { background: var(--sys-helix); }
+.flat-dot.stratus { background: var(--sys-stratus); }
+.flat-dot.aurex   { background: var(--sys-aurex); }
+.flat-main {
+  font-size: 12px; color: var(--text-primary); margin-bottom: 2px;
+  display: flex; align-items: baseline; gap: 5px;
+}
+.flat-meta {
+  font-family: var(--mono); font-size: 10px; color: var(--text-tertiary);
+  line-height: 1.4; letter-spacing: 0.01em;
+}
+.flat-content { flex: 1; min-width: 0; }
+
+/* ── SEARCH RESULTS (1B) ── */
+.sr-count {
+  display: flex; align-items: center;
+  padding: 5px 12px;
+  background: var(--bg-secondary);
+  border-bottom: 0.5px solid var(--border);
+}
+.sr-count-label {
+  font-family: var(--mono); font-size: 10px; color: var(--text-tertiary);
+}
+.sr-row {
+  display: flex; align-items: flex-start; gap: 8px;
+  padding: 7px 12px; border-bottom: 0.5px solid var(--border); cursor: pointer;
+}
+.sr-row:last-child { border-bottom: none; }
+.sr-row:hover { background: var(--bg-secondary); }
+.sr-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+.sr-content { flex: 1; min-width: 0; }
+.sr-main {
+  font-size: 12px; color: var(--text-primary); margin-bottom: 2px;
+  display: flex; align-items: baseline; gap: 4px; flex-wrap: wrap;
+}
+.sr-meta {
+  display: flex; align-items: center; gap: 4px;
+  font-family: var(--mono); font-size: 10px; color: var(--text-tertiary);
+}
+.sr-meta-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+.hl {
+  background: var(--hl-bg); color: var(--hl-text);
+  border-radius: 2px; padding: 0 1px;
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="page-heading">
+    <h1>Fittings Panel — Design Variants</h1>
+    <p>315px wide · search behaviour · system filter options · hierarchy alternatives · combined recommendation</p>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════
+       1 — SEARCH
+  ══════════════════════════════════════════════════════ -->
+  <div class="pattern-section">
+    <div class="section-head">
+      <div class="section-letter">1</div>
+      <div>
+        <h2>Search</h2>
+        <div class="section-tradeoff">Filters on fitting ID (e.g. "001", "CV-100-XF") and equipment name (e.g. "valve", "pump"). During search the hierarchy collapses to a flat result list — context travels with each row as secondary metadata.</div>
+      </div>
+    </div>
+
+    <div class="panel-row">
+
+      <!-- 1A: Default -->
+      <div class="panel-col">
+        <div class="panel-label">1A — Default state</div>
+        <div class="panel-frame">
+          <div class="panel-chrome"><span class="chrome-title">Fittings</span></div>
+          <div class="toolbar">
+            <div class="search-row">
+              <span class="search-icon">⌕</span>
+              <input type="text" placeholder="Search fittings…" readonly>
+            </div>
+          </div>
+          <div class="panel-list">
+            <!-- Vantor — expanded -->
+            <div class="sys-group">
+              <div class="sys-hdr">
+                <span class="sys-chev">▾</span>
+                <span class="sys-dot vantor"></span>
+                <span class="sys-name">Vantor Engine Core</span>
+                <span class="sys-ct">14</span>
+              </div>
+              <div class="fn-group">
+                <div class="fn-hdr"><span class="fn-chev">▾</span><span class="fn-name">Valves</span><span class="fn-ct">5</span></div>
+                <div class="fit-3"><span class="fit-id">001</span><span class="fit-name">Crossfeed valve</span></div>
+                <div class="fit-3"><span class="fit-id">002</span><span class="fit-name">Butterfly valve</span></div>
+                <div class="fit-3"><span class="fit-id">003</span><span class="fit-name">Butterfly valve</span></div>
+                <div class="fit-3"><span class="fit-id">004</span><span class="fit-name">Slide valve</span></div>
+                <div class="fit-3"><span class="fit-id">005</span><span class="fit-name">Needle valve</span></div>
+              </div>
+              <div class="fn-group">
+                <div class="fn-hdr"><span class="fn-chev coll">▾</span><span class="fn-name">Pipes</span><span class="fn-ct">6</span></div>
+              </div>
+              <div class="fn-group">
+                <div class="fn-hdr"><span class="fn-chev coll">▾</span><span class="fn-name">Tanks</span><span class="fn-ct">3</span></div>
+              </div>
+            </div>
+            <!-- Helix — collapsed -->
+            <div class="sys-group">
+              <div class="sys-hdr">
+                <span class="sys-chev coll">▾</span>
+                <span class="sys-dot helix"></span>
+                <span class="sys-name">Helix Propulsion Suite</span>
+                <span class="sys-ct">3</span>
+              </div>
+            </div>
+            <!-- Stratus — collapsed -->
+            <div class="sys-group">
+              <div class="sys-hdr">
+                <span class="sys-chev coll">▾</span>
+                <span class="sys-dot stratus"></span>
+                <span class="sys-name">Stratus Power Unit</span>
+                <span class="sys-ct">2</span>
+              </div>
+            </div>
+            <!-- Aurex — collapsed -->
+            <div class="sys-group">
+              <div class="sys-hdr">
+                <span class="sys-chev coll">▾</span>
+                <span class="sys-dot aurex"></span>
+                <span class="sys-name">Aurex Drive System</span>
+                <span class="sys-ct">1</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="panel-note">Current 3-level tree: System → Function → Fittings. Vantor expanded to show Valves. Other groups collapsed.</div>
+      </div>
+
+      <!-- 1B: Mid-search -->
+      <div class="panel-col">
+        <div class="panel-label">1B — Mid-search ("valve")</div>
+        <div class="panel-frame">
+          <div class="panel-chrome"><span class="chrome-title">Fittings</span></div>
+          <div class="toolbar">
+            <div class="search-row">
+              <span class="search-icon">⌕</span>
+              <input type="text" value="valve" readonly>
+              <span class="search-clear">×</span>
+            </div>
+          </div>
+          <div class="sr-count">
+            <span class="sr-count-label">7 results</span>
+          </div>
+          <div class="panel-list">
+            <div class="sr-row">
+              <div class="sr-dot" style="background:var(--sys-vantor)"></div>
+              <div class="sr-content">
+                <div class="sr-main"><span class="fit-id">001</span>&thinsp;Crossfeed <span class="hl">valve</span></div>
+                <div class="sr-meta"><span class="sr-meta-dot" style="background:var(--sys-vantor)"></span>Vantor Engine Core · Valves</div>
+              </div>
+            </div>
+            <div class="sr-row">
+              <div class="sr-dot" style="background:var(--sys-vantor)"></div>
+              <div class="sr-content">
+                <div class="sr-main"><span class="fit-id">002</span>&thinsp;Butterfly <span class="hl">valve</span></div>
+                <div class="sr-meta"><span class="sr-meta-dot" style="background:var(--sys-vantor)"></span>Vantor Engine Core · Valves</div>
+              </div>
+            </div>
+            <div class="sr-row">
+              <div class="sr-dot" style="background:var(--sys-vantor)"></div>
+              <div class="sr-content">
+                <div class="sr-main"><span class="fit-id">003</span>&thinsp;Butterfly <span class="hl">valve</span></div>
+                <div class="sr-meta"><span class="sr-meta-dot" style="background:var(--sys-vantor)"></span>Vantor Engine Core · Valves</div>
+              </div>
+            </div>
+            <div class="sr-row">
+              <div class="sr-dot" style="background:var(--sys-vantor)"></div>
+              <div class="sr-content">
+                <div class="sr-main"><span class="fit-id">004</span>&thinsp;Slide <span class="hl">valve</span></div>
+                <div class="sr-meta"><span class="sr-meta-dot" style="background:var(--sys-vantor)"></span>Vantor Engine Core · Valves</div>
+              </div>
+            </div>
+            <div class="sr-row">
+              <div class="sr-dot" style="background:var(--sys-vantor)"></div>
+              <div class="sr-content">
+                <div class="sr-main"><span class="fit-id">005</span>&thinsp;Needle <span class="hl">valve</span></div>
+                <div class="sr-meta"><span class="sr-meta-dot" style="background:var(--sys-vantor)"></span>Vantor Engine Core · Valves</div>
+              </div>
+            </div>
+            <div class="sr-row">
+              <div class="sr-dot" style="background:var(--sys-helix)"></div>
+              <div class="sr-content">
+                <div class="sr-main"><span class="fit-id">009</span>&thinsp;Gate <span class="hl">valve</span></div>
+                <div class="sr-meta"><span class="sr-meta-dot" style="background:var(--sys-helix)"></span>Helix Propulsion Suite · Valves</div>
+              </div>
+            </div>
+            <div class="sr-row">
+              <div class="sr-dot" style="background:var(--sys-stratus)"></div>
+              <div class="sr-content">
+                <div class="sr-main"><span class="fit-id">011</span>&thinsp;Relief <span class="hl">valve</span></div>
+                <div class="sr-meta"><span class="sr-meta-dot" style="background:var(--sys-stratus)"></span>Stratus Power Unit · Valves</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="panel-note">Hierarchy drops entirely during search. Every row is self-contained: ID, name, and system+function as secondary metadata. Colour dot connects back to canvas. × clears and restores the tree.</div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════
+       2A — SYSTEM FILTER: CHIPS
+  ══════════════════════════════════════════════════════ -->
+  <div class="pattern-section">
+    <div class="section-head">
+      <div class="section-letter">2A</div>
+      <div>
+        <h2>System filter — chips below search bar</h2>
+      </div>
+    </div>
+
+    <div class="panel-row">
+      <div class="panel-col">
+        <div class="panel-label">Vantor active · 6 of 20 shown · "+14 more"</div>
+        <div class="panel-frame">
+          <div class="panel-chrome"><span class="chrome-title">Fittings</span></div>
+          <div class="toolbar">
+            <div class="search-row">
+              <span class="search-icon">⌕</span>
+              <input type="text" placeholder="Search fittings…" readonly>
+            </div>
+            <div class="chip-row">
+              <div class="chip active">
+                <span class="chip-dot" style="background:var(--sys-vantor)"></span>
+                Vantor…<span class="chip-x">×</span>
+              </div>
+              <div class="chip">
+                <span class="chip-dot" style="background:var(--sys-helix)"></span>
+                Helix…
+              </div>
+              <div class="chip">
+                <span class="chip-dot" style="background:var(--sys-stratus)"></span>
+                Stratus…
+              </div>
+              <div class="chip">
+                <span class="chip-dot" style="background:var(--sys-aurex)"></span>
+                Aurex…
+              </div>
+              <div class="chip">
+                <span class="chip-dot" style="background:#6AAECC"></span>
+                Solara…
+              </div>
+              <div class="chip">
+                <span class="chip-dot" style="background:#8FBA8F"></span>
+                Cryon…
+              </div>
+              <div class="chip-more">+14 more</div>
+            </div>
+          </div>
+          <div class="panel-list">
+            <div class="sys-group">
+              <div class="sys-hdr">
+                <span class="sys-chev">▾</span>
+                <span class="sys-dot vantor"></span>
+                <span class="sys-name">Vantor Engine Core</span>
+                <span class="sys-ct">14</span>
+              </div>
+              <div class="fn-group">
+                <div class="fn-hdr"><span class="fn-chev">▾</span><span class="fn-name">Valves</span><span class="fn-ct">5</span></div>
+                <div class="fit-3"><span class="fit-id">001</span><span class="fit-name">Crossfeed valve</span></div>
+                <div class="fit-3"><span class="fit-id">002</span><span class="fit-name">Butterfly valve</span></div>
+                <div class="fit-3"><span class="fit-id">003</span><span class="fit-name">Butterfly valve</span></div>
+                <div class="fit-3"><span class="fit-id">004</span><span class="fit-name">Slide valve</span></div>
+                <div class="fit-3"><span class="fit-id">005</span><span class="fit-name">Needle valve</span></div>
+              </div>
+              <div class="fn-group">
+                <div class="fn-hdr"><span class="fn-chev coll">▾</span><span class="fn-name">Pipes</span><span class="fn-ct">6</span></div>
+              </div>
+              <div class="fn-group">
+                <div class="fn-hdr"><span class="fn-chev coll">▾</span><span class="fn-name">Tanks</span><span class="fn-ct">3</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="panel-note">Works cleanly for ≤6 systems. At 20 systems with long names, two rows fill quickly — "+14 more" hides the majority. Active selection visible at a glance; discovery collapses once systems exceed the visible row cap.</div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════
+       2B — SYSTEM FILTER: POPOVER BUTTON
+  ══════════════════════════════════════════════════════ -->
+  <div class="pattern-section">
+    <div class="section-head">
+      <div class="section-letter">2B</div>
+      <div>
+        <h2>System filter — popover button <span class="rec-tag">Recommended</span></h2>
+      </div>
+    </div>
+
+    <div class="panel-row">
+
+      <!-- State 1: No filter -->
+      <div class="panel-col">
+        <div class="panel-label">No filter active</div>
+        <div class="panel-frame">
+          <div class="panel-chrome"><span class="chrome-title">Fittings</span></div>
+          <div class="toolbar">
+            <div class="search-row">
+              <span class="search-icon">⌕</span>
+              <input type="text" placeholder="Search fittings…" readonly>
+            </div>
+            <div class="filter-bar">
+              <span class="result-count">20 fittings</span>
+              <div class="sys-btn">
+                Systems <span class="btn-caret">▾</span>
+              </div>
+            </div>
+          </div>
+          <div class="panel-list">
+            <div class="sys-group">
+              <div class="sys-hdr">
+                <span class="sys-chev">▾</span><span class="sys-dot vantor"></span>
+                <span class="sys-name">Vantor Engine Core</span><span class="sys-ct">14</span>
+              </div>
+              <div class="fn-group">
+                <div class="fn-hdr"><span class="fn-chev">▾</span><span class="fn-name">Valves</span><span class="fn-ct">5</span></div>
+                <div class="fit-3"><span class="fit-id">001</span><span class="fit-name">Crossfeed valve</span></div>
+                <div class="fit-3"><span class="fit-id">002</span><span class="fit-name">Butterfly valve</span></div>
+                <div class="fit-3"><span class="fit-id">003</span><span class="fit-name">Butterfly valve</span></div>
+                <div class="fit-3"><span class="fit-id">004</span><span class="fit-name">Slide valve</span></div>
+                <div class="fit-3"><span class="fit-id">005</span><span class="fit-name">Needle valve</span></div>
+              </div>
+              <div class="fn-group">
+                <div class="fn-hdr"><span class="fn-chev coll">▾</span><span class="fn-name">Pipes</span><span class="fn-ct">6</span></div>
+              </div>
+              <div class="fn-group">
+                <div class="fn-hdr"><span class="fn-chev coll">▾</span><span class="fn-name">Tanks</span><span class="fn-ct">3</span></div>
+              </div>
+            </div>
+            <div class="sys-group">
+              <div class="sys-hdr">
+                <span class="sys-chev coll">▾</span><span class="sys-dot helix"></span>
+                <span class="sys-name">Helix Propulsion Suite</span><span class="sys-ct">3</span>
+              </div>
+            </div>
+            <div class="sys-group">
+              <div class="sys-hdr">
+                <span class="sys-chev coll">▾</span><span class="sys-dot stratus"></span>
+                <span class="sys-name">Stratus Power Unit</span><span class="sys-ct">2</span>
+              </div>
+            </div>
+            <div class="sys-group">
+              <div class="sys-hdr">
+                <span class="sys-chev coll">▾</span><span class="sys-dot aurex"></span>
+                <span class="sys-name">Aurex Drive System</span><span class="sys-ct">1</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- State 2: Popover open -->
+      <div class="panel-col">
+        <div class="panel-label">Popover open — selecting systems</div>
+        <!-- panel-frame has overflow:visible so popover floats above content -->
+        <div class="panel-frame" style="overflow:visible; border-radius:12px;">
+          <!-- inner wrapper provides the clipped visual for chrome+toolbar -->
+          <div style="border-radius:12px; overflow:hidden; position:relative;">
+            <div class="panel-chrome"><span class="chrome-title">Fittings</span></div>
+            <div class="toolbar">
+              <div class="search-row">
+                <span class="search-icon">⌕</span>
+                <input type="text" placeholder="Search fittings…" readonly>
+              </div>
+              <div class="filter-bar">
+                <span class="result-count">20 fittings</span>
+                <div class="sys-btn active">
+                  Systems <span class="btn-caret">▾</span>
+                </div>
+              </div>
+            </div>
+            <!-- Dimmed list behind popover -->
+            <div class="panel-list" style="opacity:0.25; pointer-events:none;">
+              <div class="sys-group">
+                <div class="sys-hdr">
+                  <span class="sys-chev">▾</span><span class="sys-dot vantor"></span>
+                  <span class="sys-name">Vantor Engine Core</span><span class="sys-ct">14</span>
+                </div>
+              </div>
+              <div class="sys-group">
+                <div class="sys-hdr">
+                  <span class="sys-chev coll">▾</span><span class="sys-dot helix"></span>
+                  <span class="sys-name">Helix Propulsion Suite</span><span class="sys-ct">3</span>
+                </div>
+              </div>
+              <div class="sys-group">
+                <div class="sys-hdr">
+                  <span class="sys-chev coll">▾</span><span class="sys-dot stratus"></span>
+                  <span class="sys-name">Stratus Power Unit</span><span class="sys-ct">2</span>
+                </div>
+              </div>
+              <div class="sys-group">
+                <div class="sys-hdr">
+                  <span class="sys-chev coll">▾</span><span class="sys-dot aurex"></span>
+                  <span class="sys-name">Aurex Drive System</span><span class="sys-ct">1</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Popover floats above — absolutely positioned within panel-frame -->
+          <div class="popover">
+            <div class="pop-header">
+              <span class="pop-header-label">Systems</span>
+              <span class="pop-clear">Clear</span>
+            </div>
+            <div class="pop-row">
+              <div class="pop-cb checked"></div>
+              <span class="pop-sys-dot" style="background:var(--sys-vantor)"></span>
+              <span class="pop-sys-name">Vantor Engine Core</span>
+            </div>
+            <div class="pop-row">
+              <div class="pop-cb"></div>
+              <span class="pop-sys-dot" style="background:var(--sys-helix)"></span>
+              <span class="pop-sys-name">Helix Propulsion Suite</span>
+            </div>
+            <div class="pop-row">
+              <div class="pop-cb checked"></div>
+              <span class="pop-sys-dot" style="background:var(--sys-stratus)"></span>
+              <span class="pop-sys-name">Stratus Power Unit</span>
+            </div>
+            <div class="pop-row">
+              <div class="pop-cb"></div>
+              <span class="pop-sys-dot" style="background:var(--sys-aurex)"></span>
+              <span class="pop-sys-name">Aurex Drive System</span>
+            </div>
+            <div class="pop-row">
+              <div class="pop-cb"></div>
+              <span class="pop-sys-dot" style="background:#6AAECC"></span>
+              <span class="pop-sys-name">Solara Thermal Net</span>
+            </div>
+            <div class="pop-row">
+              <div class="pop-cb"></div>
+              <span class="pop-sys-dot" style="background:#8FBA8F"></span>
+              <span class="pop-sys-name">Cryonics Coolant Loop</span>
+            </div>
+            <div class="pop-more">+ 14 more systems…</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- State 3: 2 systems selected, filtered -->
+      <div class="panel-col">
+        <div class="panel-label">Vantor + Stratus selected</div>
+        <div class="panel-frame">
+          <div class="panel-chrome"><span class="chrome-title">Fittings</span></div>
+          <div class="toolbar">
+            <div class="search-row">
+              <span class="search-icon">⌕</span>
+              <input type="text" placeholder="Search fittings…" readonly>
+            </div>
+            <div class="filter-bar">
+              <span class="result-count">16 fittings</span>
+              <div class="sys-btn active">
+                <div class="btn-dots">
+                  <span class="btn-dot vantor"></span>
+                  <span class="btn-dot stratus"></span>
+                </div>
+                Systems <span class="btn-caret">▾</span>
+              </div>
+            </div>
+          </div>
+          <div class="panel-list">
+            <div class="sys-group">
+              <div class="sys-hdr">
+                <span class="sys-chev">▾</span><span class="sys-dot vantor"></span>
+                <span class="sys-name">Vantor Engine Core</span><span class="sys-ct">14</span>
+              </div>
+              <div class="fn-group">
+                <div class="fn-hdr"><span class="fn-chev">▾</span><span class="fn-name">Valves</span><span class="fn-ct">5</span></div>
+                <div class="fit-3"><span class="fit-id">001</span><span class="fit-name">Crossfeed valve</span></div>
+                <div class="fit-3"><span class="fit-id">002</span><span class="fit-name">Butterfly valve</span></div>
+                <div class="fit-3"><span class="fit-id">003</span><span class="fit-name">Butterfly valve</span></div>
+                <div class="fit-3"><span class="fit-id">004</span><span class="fit-name">Slide valve</span></div>
+                <div class="fit-3"><span class="fit-id">005</span><span class="fit-name">Needle valve</span></div>
+              </div>
+              <div class="fn-group">
+                <div class="fn-hdr"><span class="fn-chev coll">▾</span><span class="fn-name">Pipes</span><span class="fn-ct">6</span></div>
+              </div>
+              <div class="fn-group">
+                <div class="fn-hdr"><span class="fn-chev coll">▾</span><span class="fn-name">Tanks</span><span class="fn-ct">3</span></div>
+              </div>
+            </div>
+            <div class="sys-group">
+              <div class="sys-hdr">
+                <span class="sys-chev">▾</span><span class="sys-dot stratus"></span>
+                <span class="sys-name">Stratus Power Unit</span><span class="sys-ct">2</span>
+              </div>
+              <div class="fn-group">
+                <div class="fn-hdr"><span class="fn-chev">▾</span><span class="fn-name">Valves</span><span class="fn-ct">1</span></div>
+                <div class="fit-3"><span class="fit-id">011</span><span class="fit-name">Relief valve</span></div>
+              </div>
+              <div class="fn-group">
+                <div class="fn-hdr"><span class="fn-chev">▾</span><span class="fn-name">Pumps</span><span class="fn-ct">1</span></div>
+                <div class="fit-3"><span class="fit-id">010</span><span class="fit-name">Coolant pump</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="panel-note">One toolbar row regardless of selection count. Coloured dots on the button confirm active filter at a glance — no need to re-open to know what's on. Scales cleanly to 20 systems in the popover's scrollable list.</div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════
+       2C — SYSTEM FILTER: SC-PILL ROW
+  ══════════════════════════════════════════════════════ -->
+  <div class="pattern-section">
+    <div class="section-head">
+      <div class="section-letter">2C</div>
+      <div>
+        <h2>System filter — sc-pill row (defect filter pattern)</h2>
+      </div>
+    </div>
+
+    <div class="panel-row">
+      <div class="panel-col">
+        <div class="panel-label">Vantor active · 6 of 20 visible · overflow problem</div>
+        <div class="panel-frame">
+          <div class="panel-chrome"><span class="chrome-title">Fittings</span></div>
+          <div class="toolbar">
+            <div class="search-row">
+              <span class="search-icon">⌕</span>
+              <input type="text" placeholder="Search fittings…" readonly>
+            </div>
+            <div class="sc-pill-row">
+              <div class="sc-pill vantor">
+                <span class="sc-dot" style="background:var(--sys-vantor)"></span>
+                Vantor Engine Core
+              </div>
+              <div class="sc-pill helix dimmed">
+                <span class="sc-dot" style="background:var(--sys-helix)"></span>
+                Helix Propulsion Suite
+              </div>
+              <div class="sc-pill stratus dimmed">
+                <span class="sc-dot" style="background:var(--sys-stratus)"></span>
+                Stratus Power Unit
+              </div>
+              <div class="sc-pill aurex dimmed">
+                <span class="sc-dot" style="background:var(--sys-aurex)"></span>
+                Aurex Drive System
+              </div>
+              <div class="sc-pill extra dimmed">
+                <span class="sc-dot" style="background:#6AAECC"></span>
+                Solara Thermal Net
+              </div>
+              <div class="sc-pill extra dimmed">
+                <span class="sc-dot" style="background:#8FBA8F"></span>
+                Cryonics Coolant Loop
+              </div>
+            </div>
+            <div class="overflow-note">↑ showing 6 of 20 systems — 14 not accessible</div>
+          </div>
+          <div class="panel-list">
+            <div class="sys-group">
+              <div class="sys-hdr">
+                <span class="sys-chev">▾</span><span class="sys-dot vantor"></span>
+                <span class="sys-name">Vantor Engine Core</span><span class="sys-ct">14</span>
+              </div>
+              <div class="fn-group">
+                <div class="fn-hdr"><span class="fn-chev">▾</span><span class="fn-name">Valves</span><span class="fn-ct">5</span></div>
+                <div class="fit-3"><span class="fit-id">001</span><span class="fit-name">Crossfeed valve</span></div>
+                <div class="fit-3"><span class="fit-id">002</span><span class="fit-name">Butterfly valve</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="panel-note">Excellent for ≤6 fixed, short-named categories — as with the defect classification filter (Critical, Essential, Routine…). At 20 long-named systems each pill occupies its own row, consuming 6+ rows of toolbar before any content is visible. 14 systems have no access path.</div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════
+       3A — HIERARCHY: FLAT LIST
+  ══════════════════════════════════════════════════════ -->
+  <div class="pattern-section">
+    <div class="section-head">
+      <div class="section-letter">3A</div>
+      <div>
+        <h2>Hierarchy — flat list with inline metadata</h2>
+      </div>
+    </div>
+
+    <div class="panel-row">
+      <div class="panel-col">
+        <div class="panel-label">12 fittings · no groups</div>
+        <div class="panel-frame">
+          <div class="panel-chrome"><span class="chrome-title">Fittings</span></div>
+          <div class="toolbar">
+            <div class="search-row">
+              <span class="search-icon">⌕</span>
+              <input type="text" placeholder="Search fittings…" readonly>
+            </div>
+            <div class="filter-bar">
+              <span class="result-count">12 fittings</span>
+            </div>
+          </div>
+          <div class="panel-list">
+            <div class="flat-row">
+              <span class="flat-dot vantor"></span>
+              <div class="flat-content">
+                <div class="flat-main"><span class="fit-id">001</span>&thinsp;Crossfeed valve</div>
+                <div class="flat-meta">Vantor Engine Core · Valves</div>
+              </div>
+            </div>
+            <div class="flat-row">
+              <span class="flat-dot vantor"></span>
+              <div class="flat-content">
+                <div class="flat-main"><span class="fit-id">002</span>&thinsp;Butterfly valve</div>
+                <div class="flat-meta">Vantor Engine Core · Valves</div>
+              </div>
+            </div>
+            <div class="flat-row">
+              <span class="flat-dot vantor"></span>
+              <div class="flat-content">
+                <div class="flat-main"><span class="fit-id">003</span>&thinsp;Butterfly valve</div>
+                <div class="flat-meta">Vantor Engine Core · Valves</div>
+              </div>
+            </div>
+            <div class="flat-row">
+              <span class="flat-dot vantor"></span>
+              <div class="flat-content">
+                <div class="flat-main"><span class="fit-id">004</span>&thinsp;Slide valve</div>
+                <div class="flat-meta">Vantor Engine Core · Valves</div>
+              </div>
+            </div>
+            <div class="flat-row">
+              <span class="flat-dot vantor"></span>
+              <div class="flat-content">
+                <div class="flat-main"><span class="fit-id">005</span>&thinsp;Needle valve</div>
+                <div class="flat-meta">Vantor Engine Core · Valves</div>
+              </div>
+            </div>
+            <div class="flat-row">
+              <span class="flat-dot vantor"></span>
+              <div class="flat-content">
+                <div class="flat-main"><span class="fit-id">006</span>&thinsp;Main feed pipe</div>
+                <div class="flat-meta">Vantor Engine Core · Pipes</div>
+              </div>
+            </div>
+            <div class="flat-row">
+              <span class="flat-dot helix"></span>
+              <div class="flat-content">
+                <div class="flat-main"><span class="fit-id">007</span>&thinsp;Thrust nozzle</div>
+                <div class="flat-meta">Helix Propulsion Suite · Nozzles</div>
+              </div>
+            </div>
+            <div class="flat-row">
+              <span class="flat-dot helix"></span>
+              <div class="flat-content">
+                <div class="flat-main"><span class="fit-id">008</span>&thinsp;Pressure vessel</div>
+                <div class="flat-meta">Helix Propulsion Suite · Tanks</div>
+              </div>
+            </div>
+            <div class="flat-row">
+              <span class="flat-dot helix"></span>
+              <div class="flat-content">
+                <div class="flat-main"><span class="fit-id">009</span>&thinsp;Gate valve</div>
+                <div class="flat-meta">Helix Propulsion Suite · Valves</div>
+              </div>
+            </div>
+            <div class="flat-row">
+              <span class="flat-dot stratus"></span>
+              <div class="flat-content">
+                <div class="flat-main"><span class="fit-id">010</span>&thinsp;Coolant pump</div>
+                <div class="flat-meta">Stratus Power Unit · Pumps</div>
+              </div>
+            </div>
+            <div class="flat-row">
+              <span class="flat-dot stratus"></span>
+              <div class="flat-content">
+                <div class="flat-main"><span class="fit-id">011</span>&thinsp;Relief valve</div>
+                <div class="flat-meta">Stratus Power Unit · Valves</div>
+              </div>
+            </div>
+            <div class="flat-row">
+              <span class="flat-dot aurex"></span>
+              <div class="flat-content">
+                <div class="flat-main"><span class="fit-id">012</span>&thinsp;Actuator, primary</div>
+                <div class="flat-meta">Aurex Drive System · Actuators</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="panel-note">Fastest scan when you know what you're looking for — no nesting, no expand clicks. System dot links to canvas. Works well as the search-result state (see 1B). As a default browse view, 200+ fittings with no collapse is hard to navigate without active filtering.</div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════
+       3B — HIERARCHY: TWO-LEVEL
+  ══════════════════════════════════════════════════════ -->
+  <div class="pattern-section">
+    <div class="section-head">
+      <div class="section-letter">3B</div>
+      <div>
+        <h2>Hierarchy — two-level: system groups → fittings <span class="rec-tag">Recommended</span></h2>
+      </div>
+    </div>
+
+    <div class="panel-row">
+      <div class="panel-col">
+        <div class="panel-label">4 systems · function as tag · all expanded</div>
+        <div class="panel-frame">
+          <div class="panel-chrome"><span class="chrome-title">Fittings</span></div>
+          <div class="toolbar">
+            <div class="search-row">
+              <span class="search-icon">⌕</span>
+              <input type="text" placeholder="Search fittings…" readonly>
+            </div>
+            <div class="filter-bar">
+              <span class="result-count">12 fittings</span>
+            </div>
+          </div>
+          <div class="panel-list">
+            <!-- Vantor -->
+            <div class="sys-group">
+              <div class="sys-hdr-2">
+                <span class="sys-chev">▾</span>
+                <span class="sys-dot vantor"></span>
+                <span class="sys-name">Vantor Engine Core</span>
+                <span class="sys-ct">6</span>
+              </div>
+              <div class="sys-body-2">
+                <div class="fit-2"><span class="fit-id">001</span><span class="fit-name">Crossfeed valve</span><span class="fit-fn-tag">Valves</span></div>
+                <div class="fit-2"><span class="fit-id">002</span><span class="fit-name">Butterfly valve</span><span class="fit-fn-tag">Valves</span></div>
+                <div class="fit-2"><span class="fit-id">003</span><span class="fit-name">Butterfly valve</span><span class="fit-fn-tag">Valves</span></div>
+                <div class="fit-2"><span class="fit-id">004</span><span class="fit-name">Slide valve</span><span class="fit-fn-tag">Valves</span></div>
+                <div class="fit-2"><span class="fit-id">005</span><span class="fit-name">Needle valve</span><span class="fit-fn-tag">Valves</span></div>
+                <div class="fit-2"><span class="fit-id">006</span><span class="fit-name">Main feed pipe</span><span class="fit-fn-tag">Pipes</span></div>
+              </div>
+            </div>
+            <!-- Helix -->
+            <div class="sys-group">
+              <div class="sys-hdr-2">
+                <span class="sys-chev">▾</span>
+                <span class="sys-dot helix"></span>
+                <span class="sys-name">Helix Propulsion Suite</span>
+                <span class="sys-ct">3</span>
+              </div>
+              <div class="sys-body-2">
+                <div class="fit-2"><span class="fit-id">007</span><span class="fit-name">Thrust nozzle</span><span class="fit-fn-tag">Nozzles</span></div>
+                <div class="fit-2"><span class="fit-id">008</span><span class="fit-name">Pressure vessel</span><span class="fit-fn-tag">Tanks</span></div>
+                <div class="fit-2"><span class="fit-id">009</span><span class="fit-name">Gate valve</span><span class="fit-fn-tag">Valves</span></div>
+              </div>
+            </div>
+            <!-- Stratus -->
+            <div class="sys-group">
+              <div class="sys-hdr-2">
+                <span class="sys-chev">▾</span>
+                <span class="sys-dot stratus"></span>
+                <span class="sys-name">Stratus Power Unit</span>
+                <span class="sys-ct">2</span>
+              </div>
+              <div class="sys-body-2">
+                <div class="fit-2"><span class="fit-id">010</span><span class="fit-name">Coolant pump</span><span class="fit-fn-tag">Pumps</span></div>
+                <div class="fit-2"><span class="fit-id">011</span><span class="fit-name">Relief valve</span><span class="fit-fn-tag">Valves</span></div>
+              </div>
+            </div>
+            <!-- Aurex -->
+            <div class="sys-group">
+              <div class="sys-hdr-2">
+                <span class="sys-chev">▾</span>
+                <span class="sys-dot aurex"></span>
+                <span class="sys-name">Aurex Drive System</span>
+                <span class="sys-ct">1</span>
+              </div>
+              <div class="sys-body-2">
+                <div class="fit-2" style="border-bottom:none;"><span class="fit-id">012</span><span class="fit-name">Actuator, primary</span><span class="fit-fn-tag">Actuators</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="panel-note">Drops the 3rd level. System groups mirror canvas colour coding — the panel and diagram stay spatially coherent. Function tag preserves classification context without nesting. Collapsible groups keep long system lists manageable. Works at scale.</div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════
+       ★ COMBINED RECOMMENDATION
+  ══════════════════════════════════════════════════════ -->
+  <div class="pattern-section">
+    <div class="section-head">
+      <div class="section-letter star">★</div>
+      <div>
+        <h2>Combined recommendation</h2>
+        <div class="section-tradeoff">Popover filter (2B) + two-level hierarchy (3B) + flat search results (1B). Shown in filter-active state: Vantor + Stratus selected, Vantor expanded, Stratus collapsed.</div>
+      </div>
+    </div>
+
+    <div class="panel-row">
+      <div class="panel-col">
+        <div class="panel-label">Recommended — filter active, browsing</div>
+        <div class="panel-frame">
+          <div class="panel-chrome"><span class="chrome-title">Fittings</span></div>
+          <div class="toolbar">
+            <div class="search-row">
+              <span class="search-icon">⌕</span>
+              <input type="text" placeholder="Search fittings…" readonly>
+            </div>
+            <div class="filter-bar">
+              <span class="result-count">16 fittings · 2 systems</span>
+              <div class="sys-btn active">
+                <div class="btn-dots">
+                  <span class="btn-dot vantor"></span>
+                  <span class="btn-dot stratus"></span>
+                </div>
+                Systems <span class="btn-caret">▾</span>
+              </div>
+            </div>
+          </div>
+          <div class="panel-list">
+            <!-- Vantor — expanded -->
+            <div class="sys-group">
+              <div class="sys-hdr-2">
+                <span class="sys-chev">▾</span>
+                <span class="sys-dot vantor"></span>
+                <span class="sys-name">Vantor Engine Core</span>
+                <span class="sys-ct">14</span>
+              </div>
+              <div class="sys-body-2">
+                <div class="fit-2"><span class="fit-id">001</span><span class="fit-name">Crossfeed valve</span><span class="fit-fn-tag">Valves</span></div>
+                <div class="fit-2"><span class="fit-id">002</span><span class="fit-name">Butterfly valve</span><span class="fit-fn-tag">Valves</span></div>
+                <div class="fit-2"><span class="fit-id">003</span><span class="fit-name">Butterfly valve</span><span class="fit-fn-tag">Valves</span></div>
+                <div class="fit-2"><span class="fit-id">004</span><span class="fit-name">Slide valve</span><span class="fit-fn-tag">Valves</span></div>
+                <div class="fit-2"><span class="fit-id">005</span><span class="fit-name">Needle valve</span><span class="fit-fn-tag">Valves</span></div>
+                <div class="fit-2"><span class="fit-id">006</span><span class="fit-name">Main feed pipe</span><span class="fit-fn-tag">Pipes</span></div>
+              </div>
+            </div>
+            <!-- Stratus — collapsed -->
+            <div class="sys-group">
+              <div class="sys-hdr-2" style="border-bottom:none;">
+                <span class="sys-chev coll">▾</span>
+                <span class="sys-dot stratus"></span>
+                <span class="sys-name">Stratus Power Unit</span>
+                <span class="sys-ct">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="panel-note">Three UX modes without conflict: browse (two-level tree), filter (popover narrows systems), search (flat result list). Button dots confirm active filter without opening the popover. System groups echo canvas colour coding — selecting on panel or canvas stays coherent.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
