@@ -1,0 +1,748 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500&display=swap');
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --sans: 'IBM Plex Sans', var(--font-sans, system-ui);
+    --mono: 'IBM Plex Mono', var(--font-mono, monospace);
+    --cl-critical: #A32D2D; --cl-critical-bg: #FCEBEB; --cl-critical-mid: #E24B4A;
+    --cl-essential: #854F0B; --cl-essential-bg: #FAEEDA; --cl-essential-mid: #BA7517;
+    --cl-routine: #0C447C; --cl-routine-bg: #E6F1FB; --cl-routine-mid: #185FA5;
+    --cl-monitoring: #085041; --cl-monitoring-bg: #E1F5EE; --cl-monitoring-mid: #0F6E56;
+    --cl-deferred: #5F5E5A; --cl-deferred-bg: #F1EFE8; --cl-deferred-mid: #888780;
+  }
+  body { font-family: var(--sans); background: var(--color-background-tertiary, #f0eeea); display: flex; align-items: flex-start; justify-content: center; padding: 2rem 1rem; gap: 32px; flex-wrap: wrap; }
+
+  .panel-frame {
+    width: 350px;
+    height: 680px;
+    background: var(--color-background-primary, #fff);
+    border: 0.5px solid var(--color-border-tertiary, rgba(0,0,0,0.12));
+    border-radius: var(--border-radius-lg, 12px);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .panel-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--color-text-tertiary, #888780);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 10px;
+  }
+
+  /* ── SUMMARY BAR ── */
+  .summary-bar {
+    padding: 12px 14px 10px;
+    border-bottom: 0.5px solid var(--color-border-tertiary, rgba(0,0,0,0.12));
+    flex-shrink: 0;
+  }
+  .summary-title {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--color-text-tertiary, #888780);
+    font-family: var(--mono);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin-bottom: 8px;
+  }
+  .summary-counts {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .sc-pill {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 8px 3px 6px;
+    border-radius: 4px;
+    border: 0.5px solid;
+    cursor: pointer;
+    font-size: 11px;
+    font-family: var(--mono);
+    font-weight: 500;
+    transition: opacity 0.1s;
+  }
+  .sc-pill.dimmed { opacity: 0.35; }
+  .sc-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .sc-pill.critical { background: var(--cl-critical-bg); border-color: #F09595; color: var(--cl-critical); }
+  .sc-pill.essential { background: var(--cl-essential-bg); border-color: #FAC775; color: var(--cl-essential); }
+  .sc-pill.routine { background: var(--cl-routine-bg); border-color: #B5D4F4; color: var(--cl-routine); }
+  .sc-pill.monitoring { background: var(--cl-monitoring-bg); border-color: #9FE1CB; color: var(--cl-monitoring); }
+  .sc-pill.deferred { background: var(--cl-deferred-bg); border-color: #D3D1C7; color: var(--cl-deferred); }
+
+  /* ── TOOLBAR ── */
+  .toolbar {
+    padding: 8px 14px;
+    border-bottom: 0.5px solid var(--color-border-tertiary, rgba(0,0,0,0.12));
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+  .search-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--color-background-secondary, #f6f5f2);
+    border: 0.5px solid var(--color-border-tertiary, rgba(0,0,0,0.12));
+    border-radius: 6px;
+    padding: 0 10px;
+    height: 28px;
+  }
+  .search-row input {
+    flex: 1; border: none; background: transparent;
+    font-size: 12px; font-family: var(--sans);
+    color: var(--color-text-primary, #1a1a18); outline: none;
+  }
+  .search-icon { font-size: 13px; color: var(--color-text-tertiary, #888780); line-height: 1; }
+  .filter-row { display: flex; align-items: center; gap: 6px; }
+  .date-sel {
+    font-size: 11px; font-family: var(--sans);
+    border: 0.5px solid var(--color-border-tertiary, rgba(0,0,0,0.12));
+    border-radius: 5px; padding: 3px 8px;
+    background: var(--color-background-primary, #fff);
+    color: var(--color-text-secondary, #5f5e5a);
+    cursor: pointer; outline: none;
+  }
+  .fr-spacer { flex: 1; }
+  .result-count {
+    font-size: 11px; font-family: var(--mono);
+    color: var(--color-text-tertiary, #888780);
+  }
+  .sort-btn {
+    display: flex; align-items: center; gap: 4px;
+    font-size: 11px; font-family: var(--sans);
+    color: var(--color-text-secondary, #5f5e5a);
+    border: 0.5px solid var(--color-border-tertiary, rgba(0,0,0,0.12));
+    border-radius: 5px; padding: 3px 8px;
+    background: var(--color-background-primary, #fff);
+    cursor: pointer;
+  }
+
+  /* ── UNLOCATED NOTICE ── */
+  .unlocated-notice {
+    margin: 0 14px;
+    margin-top: 8px;
+    padding: 6px 10px;
+    background: var(--cl-essential-bg);
+    border: 0.5px solid #FAC775;
+    border-radius: 5px;
+    font-size: 11px;
+    color: var(--cl-essential);
+    font-family: var(--mono);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  .un-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--cl-essential-mid); flex-shrink: 0; }
+
+  /* ── LIST ── */
+  .defect-list { flex: 1; overflow-y: auto; padding: 8px 0 0; }
+
+  .defect-card {
+    margin: 0 10px 6px;
+    background: var(--color-background-primary, #fff);
+    border: 0.5px solid var(--color-border-tertiary, rgba(0,0,0,0.12));
+    border-radius: var(--border-radius-lg, 12px);
+    border-left-width: 3px;
+    border-left-style: solid;
+    padding: 10px 12px 10px 11px;
+    cursor: pointer;
+    transition: border-color 0.12s;
+  }
+  .defect-card:hover { border-color: var(--color-border-secondary, rgba(0,0,0,0.22)); border-left-width: 3px; }
+  .defect-card.critical { border-left-color: var(--cl-critical-mid); }
+  .defect-card.essential { border-left-color: var(--cl-essential-mid); }
+  .defect-card.routine { border-left-color: var(--cl-routine-mid); }
+  .defect-card.monitoring { border-left-color: var(--cl-monitoring-mid); }
+  .defect-card.deferred { border-left-color: var(--cl-deferred-mid); }
+
+  .dc-top { display: flex; align-items: center; gap: 6px; margin-bottom: 5px; }
+  .dc-id { font-family: var(--mono); font-size: 11px; color: var(--color-text-secondary, #5f5e5a); }
+  .dc-class {
+    font-size: 10px; font-weight: 500; font-family: var(--mono);
+    padding: 1px 5px; border-radius: 3px;
+    text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  .dc-class.critical { background: var(--cl-critical-bg); color: var(--cl-critical); }
+  .dc-class.essential { background: var(--cl-essential-bg); color: var(--cl-essential); }
+  .dc-class.routine { background: var(--cl-routine-bg); color: var(--cl-routine); }
+  .dc-class.monitoring { background: var(--cl-monitoring-bg); color: var(--cl-monitoring); }
+  .dc-class.deferred { background: var(--cl-deferred-bg); color: var(--cl-deferred); }
+  .dc-spacer { flex: 1; }
+  .dc-date { font-family: var(--mono); font-size: 10px; color: var(--color-text-tertiary, #888780); }
+  .dc-title { font-size: 12px; font-weight: 500; color: var(--color-text-primary, #1a1a18); line-height: 1.4; margin-bottom: 4px; }
+  .dc-asset { font-size: 11px; color: var(--color-text-secondary, #5f5e5a); font-family: var(--mono); margin-bottom: 5px; }
+  .dc-footer { display: flex; align-items: center; justify-content: space-between; }
+  .dc-tags { display: flex; gap: 4px; flex-wrap: wrap; }
+  .dc-tag {
+    font-size: 10px; font-family: var(--mono);
+    color: var(--color-text-tertiary, #888780);
+    border: 0.5px solid var(--color-border-tertiary, rgba(0,0,0,0.12));
+    border-radius: 3px; padding: 1px 5px;
+    background: var(--color-background-secondary, #f6f5f2);
+  }
+  .dc-resolved {
+    font-size: 10px; font-family: var(--mono);
+    color: var(--cl-monitoring); background: var(--cl-monitoring-bg);
+    border-radius: 3px; padding: 1px 6px;
+    border: 0.5px solid #9FE1CB;
+    white-space: nowrap;
+  }
+  .dc-unresolved {
+    font-size: 10px; font-family: var(--mono);
+    color: var(--cl-essential); background: var(--cl-essential-bg);
+    border-radius: 3px; padding: 1px 6px;
+    border: 0.5px solid #FAC775;
+    white-space: nowrap;
+  }
+
+  /* ── VIEW TOGGLE ── */
+  .view-toggle { display: flex; }
+  .vt-btn {
+    font-size: 11px; font-family: var(--sans);
+    padding: 3px 10px;
+    border: 0.5px solid var(--color-border-tertiary, rgba(0,0,0,0.12));
+    color: var(--color-text-secondary, #5f5e5a);
+    background: var(--color-background-secondary, #f6f5f2);
+    border-right: none; cursor: pointer;
+  }
+  .vt-btn:first-child { border-radius: 5px 0 0 5px; }
+  .vt-btn:last-child { border-right: 0.5px solid var(--color-border-tertiary, rgba(0,0,0,0.12)); border-radius: 0 5px 5px 0; }
+  .vt-btn.active { background: var(--color-background-primary, #fff); color: var(--color-text-primary, #1a1a18); font-weight: 500; }
+
+  /* ── STATUS BADGES (LIVE / SCHEDULED / CLOSED) ── */
+  .status-badge {
+    font-family: var(--mono); font-size: 10px; font-weight: 500;
+    padding: 1px 6px; border-radius: 10px; white-space: nowrap; flex-shrink: 0;
+  }
+  .status-live      { background: #FCEBEB; color: #A32D2D; }
+  .status-scheduled { background: #E6F1FB; color: #185FA5; }
+  .status-closed    { background: #F1EFE8; color: #888780; border: 0.5px solid #ccc; }
+
+  /* ── BY ITEM LIST ── */
+  .item-list { flex: 1; overflow-y: auto; padding: 8px 0 0; }
+
+  /* View switching */
+  #list-panel[data-view="by-defect"] .defect-list { display: block; }
+  #list-panel[data-view="by-defect"] .item-list   { display: none; }
+  #list-panel[data-view="by-item"]   .defect-list { display: none; }
+  #list-panel[data-view="by-item"]   .item-list   { display: block; }
+
+  /* Item master card */
+  .item-card {
+    margin: 0 10px 6px;
+    border: 0.5px solid var(--color-border-tertiary, rgba(0,0,0,0.12));
+    border-radius: var(--border-radius-lg, 12px);
+    border-left-width: 3px;
+    border-left-style: solid;
+    border-left-color: transparent;
+    overflow: hidden;
+  }
+  .item-card.critical  { border-left-color: var(--cl-critical-mid); }
+  .item-card.essential { border-left-color: var(--cl-essential-mid); }
+  .item-card.routine   { border-left-color: var(--cl-routine-mid); }
+  .item-card.monitoring { border-left-color: var(--cl-monitoring-mid); }
+  .item-card.deferred  { border-left-color: var(--cl-deferred-mid); }
+
+  .item-card-header {
+    display: flex; align-items: center; gap: 7px;
+    padding: 8px 12px 8px 11px;
+    background: var(--color-background-secondary, #f6f5f2);
+    cursor: pointer; user-select: none;
+  }
+  .item-card-header:hover { background: #eeece8; }
+
+  .ich-tag   { font-family: var(--mono); font-size: 11px; font-weight: 500; color: var(--color-text-primary, #1a1a18); flex-shrink: 0; }
+  .ich-name  { font-size: 11px; color: var(--color-text-secondary, #5f5e5a); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .ich-dots  { display: flex; gap: 3px; align-items: center; flex-shrink: 0; }
+  .ich-dot   { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .ich-dot.critical  { background: var(--cl-critical-mid); }
+  .ich-dot.essential { background: var(--cl-essential-mid); }
+  .ich-dot.routine   { background: var(--cl-routine-mid); }
+  .ich-dot.monitoring { background: var(--cl-monitoring-mid); }
+  .ich-dot.deferred  { background: var(--cl-deferred-mid); }
+  .ich-count { font-family: var(--mono); font-size: 10px; color: var(--color-text-tertiary, #888780); flex-shrink: 0; }
+  .ich-chev  { font-size: 10px; color: var(--color-text-tertiary, #888780); flex-shrink: 0; transition: transform 0.15s; }
+  .item-card.collapsed .ich-chev { transform: rotate(-90deg); }
+
+  .item-card-rows { border-top: 0.5px solid var(--color-border-tertiary, rgba(0,0,0,0.12)); }
+  .item-card.collapsed .item-card-rows { display: none; }
+
+  .item-defect-row {
+    display: flex; align-items: center; gap: 8px;
+    padding: 7px 12px;
+    border-bottom: 0.5px solid var(--color-border-tertiary, rgba(0,0,0,0.12));
+    cursor: pointer; min-width: 0;
+  }
+  .item-defect-row:last-child { border-bottom: none; }
+  .item-defect-row:hover { background: var(--color-background-secondary, #f6f5f2); }
+  .idr-id    { font-family: var(--mono); font-size: 11px; color: var(--color-text-secondary, #5f5e5a); flex-shrink: 0; white-space: nowrap; }
+  .idr-title { font-size: 11px; color: var(--color-text-primary, #1a1a18); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  /* ── DETAIL ── */
+  .detail-wrap { display: flex; flex-direction: column; height: 100%; overflow: hidden; }
+  .detail-back {
+    display: flex; align-items: center; gap: 6px;
+    padding: 9px 14px;
+    border-bottom: 0.5px solid var(--color-border-tertiary, rgba(0,0,0,0.12));
+    cursor: pointer; flex-shrink: 0;
+    font-size: 12px; color: var(--color-text-secondary, #5f5e5a);
+    font-family: var(--sans);
+  }
+  .detail-back:hover { color: var(--color-text-primary, #1a1a18); }
+  .back-arrow { font-size: 13px; }
+  .detail-scroll { flex: 1; overflow-y: auto; }
+  .detail-header {
+    padding: 12px 14px 12px;
+    border-bottom: 0.5px solid var(--color-border-tertiary, rgba(0,0,0,0.12));
+    border-top: 3px solid var(--cl-essential-mid);
+  }
+  .dh-top { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+  .dh-title { font-size: 14px; font-weight: 500; color: var(--color-text-primary, #1a1a18); line-height: 1.35; margin-bottom: 5px; }
+  .dh-asset { font-size: 11px; font-family: var(--mono); color: var(--color-text-secondary, #5f5e5a); margin-bottom: 7px; }
+  .dh-tags { display: flex; gap: 5px; flex-wrap: wrap; }
+
+  .detail-section {
+    padding: 10px 14px;
+    border-bottom: 0.5px solid var(--color-border-tertiary, rgba(0,0,0,0.12));
+  }
+  .detail-section:last-child { border-bottom: none; }
+  .ds-label {
+    font-family: var(--mono); font-size: 10px;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--color-text-tertiary, #888780); margin-bottom: 5px;
+  }
+  .ds-text { font-size: 12px; color: var(--color-text-secondary, #5f5e5a); line-height: 1.6; }
+  .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .meta-key { font-size: 11px; color: var(--color-text-tertiary, #888780); margin-bottom: 2px; }
+  .meta-val { font-size: 12px; color: var(--color-text-secondary, #5f5e5a); font-family: var(--mono); }
+  .doc-row {
+    display: flex; align-items: flex-start; gap: 6px;
+    background: var(--color-background-secondary, #f6f5f2);
+    border: 0.5px solid var(--color-border-tertiary, rgba(0,0,0,0.12));
+    border-radius: 5px; padding: 6px 10px;
+  }
+  .doc-path { font-family: var(--mono); font-size: 11px; color: var(--color-text-secondary, #5f5e5a); flex: 1; word-break: break-all; line-height: 1.5; }
+  .copy-btn {
+    flex-shrink: 0; font-size: 10px; font-family: var(--sans);
+    background: var(--color-background-primary, #fff);
+    border: 0.5px solid var(--color-border-tertiary, rgba(0,0,0,0.12));
+    border-radius: 3px; padding: 2px 7px; cursor: pointer;
+    color: var(--color-text-secondary, #5f5e5a); margin-top: 1px;
+  }
+  .affected-list { display: flex; flex-direction: column; gap: 3px; }
+  .affected-row { display: flex; align-items: center; gap: 8px; padding: 2px 0; }
+  .aff-letter {
+    font-family: var(--mono); font-size: 11px;
+    color: var(--color-text-tertiary, #888780); width: 14px; flex-shrink: 0;
+  }
+  .aff-tag { font-family: var(--mono); font-size: 11px; color: var(--color-text-primary, #1a1a18); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .curr-badge {
+    font-size: 10px; background: var(--color-background-secondary, #f6f5f2);
+    color: var(--color-text-tertiary, #888780); padding: 1px 5px;
+    border-radius: 3px; border: 0.5px solid var(--color-border-tertiary, rgba(0,0,0,0.12));
+    flex-shrink: 0;
+  }
+  .resolution-row {
+    display: flex; align-items: flex-start; gap: 6px;
+    padding: 6px 10px;
+    background: var(--cl-monitoring-bg);
+    border: 0.5px solid #9FE1CB;
+    border-radius: 5px;
+  }
+  .res-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--cl-monitoring-mid); flex-shrink: 0; margin-top: 3px; }
+  .res-text { font-size: 12px; color: var(--cl-monitoring); line-height: 1.5; flex: 1; }
+  .res-date { font-family: var(--mono); font-size: 11px; color: var(--cl-monitoring); white-space: nowrap; }
+</style>
+
+<div style="display:flex;gap:28px;align-items:flex-start;flex-wrap:wrap;padding:1rem 0;">
+
+  <!-- LIST VIEW -->
+  <div>
+    <div class="panel-label">List view</div>
+    <div class="panel-frame" id="list-panel" data-view="by-defect">
+
+      <div class="summary-bar">
+        <div class="summary-title">Defect history</div>
+        <div class="summary-counts">
+          <div class="sc-pill critical" onclick="filterClass('critical')">
+            <div class="sc-dot" style="background:var(--cl-critical-mid)"></div>Critical <strong>2</strong>
+          </div>
+          <div class="sc-pill essential" onclick="filterClass('essential')">
+            <div class="sc-dot" style="background:var(--cl-essential-mid)"></div>Essential <strong>3</strong>
+          </div>
+          <div class="sc-pill routine" onclick="filterClass('routine')">
+            <div class="sc-dot" style="background:var(--cl-routine-mid)"></div>Routine <strong>1</strong>
+          </div>
+          <div class="sc-pill deferred" onclick="filterClass('deferred')">
+            <div class="sc-dot" style="background:var(--cl-deferred-mid)"></div>Deferred <strong>1</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <div class="filter-row" style="margin-bottom:1px">
+          <div class="view-toggle">
+            <button class="vt-btn active" onclick="setView('by-defect',this)">By Defect</button>
+            <button class="vt-btn" onclick="setView('by-item',this)">By Item</button>
+          </div>
+          <div class="fr-spacer"></div>
+          <span class="result-count" id="result-count">6 defects</span>
+        </div>
+        <div class="search-row">
+          <span class="search-icon">⌕</span>
+          <input type="text" placeholder="Search defects..." />
+        </div>
+        <div class="filter-row">
+          <select class="date-sel">
+            <option>Last 12 months</option>
+            <option>Last 2 years</option>
+            <option>Last 5 years</option>
+            <option>All time</option>
+          </select>
+          <div class="fr-spacer"></div>
+          <div class="sort-btn">Recent ↓</div>
+        </div>
+      </div>
+
+      <div class="unlocated-notice">
+        <div class="un-dot"></div>
+        2 defects could not be located on diagram
+      </div>
+
+      <div class="defect-list">
+
+        <div class="defect-card critical" onclick="openDetail()">
+          <div class="dc-top">
+            <span class="dc-id">DEF-00421/A</span>
+            <span class="dc-class critical">Critical</span>
+            <div class="dc-spacer"></div>
+            <span class="dc-date">15 Jan 2025</span>
+          </div>
+          <div class="dc-title">Valve handle exhibits progressive misalignment during actuation</div>
+          <div class="dc-asset">CV-100-XF · Crossfeed valve</div>
+          <div class="dc-footer">
+            <div class="dc-tags"><span class="dc-tag">mechanical-wear</span><span class="dc-tag">alignment</span></div>
+            <span class="dc-unresolved">Unresolved</span>
+          </div>
+        </div>
+
+        <div class="defect-card essential" onclick="openDetail()">
+          <div class="dc-top">
+            <span class="dc-id">DEF-00389/B</span>
+            <span class="dc-class essential">Essential</span>
+            <div class="dc-spacer"></div>
+            <span class="dc-date">02 Nov 2024</span>
+          </div>
+          <div class="dc-title">Pressure seal degradation at primary outlet causing intermittent leakage</div>
+          <div class="dc-asset">CV-100-XF · Crossfeed valve</div>
+          <div class="dc-footer">
+            <div class="dc-tags"><span class="dc-tag">corrosion</span><span class="dc-tag">seal-failure</span></div>
+            <span class="dc-resolved">Resolved</span>
+          </div>
+        </div>
+
+        <div class="defect-card essential" onclick="openDetail()">
+          <div class="dc-top">
+            <span class="dc-id">DEF-00312/A</span>
+            <span class="dc-class essential">Essential</span>
+            <div class="dc-spacer"></div>
+            <span class="dc-date">18 Aug 2024</span>
+          </div>
+          <div class="dc-title">Pressure relief valve fails to reseat after actuation</div>
+          <div class="dc-asset">PRV-204-AK · Relief valve, north header</div>
+          <div class="dc-footer">
+            <div class="dc-tags"><span class="dc-tag">valve-seating</span><span class="dc-tag">pressure-loss</span></div>
+            <span class="dc-resolved">Resolved</span>
+          </div>
+        </div>
+
+        <div class="defect-card routine" onclick="openDetail()">
+          <div class="dc-top">
+            <span class="dc-id">DEF-00451/A</span>
+            <span class="dc-class routine">Routine</span>
+            <div class="dc-spacer"></div>
+            <span class="dc-date">04 Mar 2024</span>
+          </div>
+          <div class="dc-title">Actuator stem thread wear on quarter-turn isolation valve</div>
+          <div class="dc-asset">ISV-087-MN · Isolation valve, feed line B</div>
+          <div class="dc-footer">
+            <div class="dc-tags"><span class="dc-tag">thread-wear</span><span class="dc-tag">actuator</span></div>
+            <span class="dc-resolved">Resolved</span>
+          </div>
+        </div>
+
+        <div class="defect-card critical" onclick="openDetail()">
+          <div class="dc-top">
+            <span class="dc-id">DEF-00298/C</span>
+            <span class="dc-class critical">Critical</span>
+            <div class="dc-spacer"></div>
+            <span class="dc-date">11 Jan 2024</span>
+          </div>
+          <div class="dc-title">Complete failure of bypass solenoid under thermal load</div>
+          <div class="dc-asset">BSV-033-QR · Bypass solenoid valve</div>
+          <div class="dc-footer">
+            <div class="dc-tags"><span class="dc-tag">thermal</span><span class="dc-tag">solenoid</span></div>
+            <span class="dc-resolved">Resolved</span>
+          </div>
+        </div>
+
+        <div class="defect-card deferred" onclick="openDetail()">
+          <div class="dc-top">
+            <span class="dc-id">DEF-00201/A</span>
+            <span class="dc-class deferred">Deferred</span>
+            <div class="dc-spacer"></div>
+            <span class="dc-date">30 Sep 2023</span>
+          </div>
+          <div class="dc-title">Minor surface corrosion on external pipe casing, section 4B</div>
+          <div class="dc-asset">PP-114-BC · Supply pipe, section 4B</div>
+          <div class="dc-footer">
+            <div class="dc-tags"><span class="dc-tag">corrosion</span><span class="dc-tag">external</span></div>
+            <span class="dc-resolved">Resolved</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- BY ITEM LIST -->
+      <div class="item-list">
+
+        <!-- CV-100-XF · Crossfeed valve — worst: critical, 2 defects -->
+        <div class="item-card critical">
+          <div class="item-card-header" onclick="toggleItem(this)">
+            <span class="ich-tag">CV-100-XF</span>
+            <span class="ich-name">Crossfeed valve</span>
+            <div class="ich-dots">
+              <div class="ich-dot critical"></div>
+              <div class="ich-dot essential"></div>
+            </div>
+            <span class="ich-count">2</span>
+            <span class="ich-chev">▾</span>
+          </div>
+          <div class="item-card-rows">
+            <div class="item-defect-row" onclick="openDetail()">
+              <span class="idr-id">DEF-00421/A</span>
+              <span class="idr-title">Valve handle exhibits progressive misalignment during actuation</span>
+              <span class="status-badge status-live">LIVE</span>
+            </div>
+            <div class="item-defect-row" onclick="openDetail()">
+              <span class="idr-id">DEF-00389/B</span>
+              <span class="idr-title">Pressure seal degradation at primary outlet causing intermittent leakage</span>
+              <span class="status-badge status-live">LIVE</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- BSV-033-QR · Bypass solenoid valve — worst: critical, 1 defect -->
+        <div class="item-card critical">
+          <div class="item-card-header" onclick="toggleItem(this)">
+            <span class="ich-tag">BSV-033-QR</span>
+            <span class="ich-name">Bypass solenoid valve</span>
+            <div class="ich-dots">
+              <div class="ich-dot critical"></div>
+            </div>
+            <span class="ich-count">1</span>
+            <span class="ich-chev">▾</span>
+          </div>
+          <div class="item-card-rows">
+            <div class="item-defect-row" onclick="openDetail()">
+              <span class="idr-id">DEF-00298/C</span>
+              <span class="idr-title">Complete failure of bypass solenoid under thermal load</span>
+              <span class="status-badge status-closed">CLOSED</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- PRV-204-AK · Relief valve, north header — worst: essential, 1 defect -->
+        <div class="item-card essential">
+          <div class="item-card-header" onclick="toggleItem(this)">
+            <span class="ich-tag">PRV-204-AK</span>
+            <span class="ich-name">Relief valve, north header</span>
+            <div class="ich-dots">
+              <div class="ich-dot essential"></div>
+            </div>
+            <span class="ich-count">1</span>
+            <span class="ich-chev">▾</span>
+          </div>
+          <div class="item-card-rows">
+            <div class="item-defect-row" onclick="openDetail()">
+              <span class="idr-id">DEF-00312/A</span>
+              <span class="idr-title">Pressure relief valve fails to reseat after actuation</span>
+              <span class="status-badge status-scheduled">SCHEDULED</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ISV-087-MN · Isolation valve, feed line B — worst: routine, 1 defect -->
+        <div class="item-card routine">
+          <div class="item-card-header" onclick="toggleItem(this)">
+            <span class="ich-tag">ISV-087-MN</span>
+            <span class="ich-name">Isolation valve, feed line B</span>
+            <div class="ich-dots">
+              <div class="ich-dot routine"></div>
+            </div>
+            <span class="ich-count">1</span>
+            <span class="ich-chev">▾</span>
+          </div>
+          <div class="item-card-rows">
+            <div class="item-defect-row" onclick="openDetail()">
+              <span class="idr-id">DEF-00451/A</span>
+              <span class="idr-title">Actuator stem thread wear on quarter-turn isolation valve</span>
+              <span class="status-badge status-closed">CLOSED</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- PP-114-BC · Supply pipe, section 4B — worst: deferred, 1 defect -->
+        <div class="item-card deferred">
+          <div class="item-card-header" onclick="toggleItem(this)">
+            <span class="ich-tag">PP-114-BC</span>
+            <span class="ich-name">Supply pipe, section 4B</span>
+            <div class="ich-dots">
+              <div class="ich-dot deferred"></div>
+            </div>
+            <span class="ich-count">1</span>
+            <span class="ich-chev">▾</span>
+          </div>
+          <div class="item-card-rows">
+            <div class="item-defect-row" onclick="openDetail()">
+              <span class="idr-id">DEF-00201/A</span>
+              <span class="idr-title">Minor surface corrosion on external pipe casing, section 4B</span>
+              <span class="status-badge status-closed">CLOSED</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- DETAIL VIEW -->
+  <div>
+    <div class="panel-label">Detail view</div>
+    <div class="panel-frame">
+      <div class="detail-wrap">
+        <div class="detail-back">
+          <span class="back-arrow">←</span> All defects
+        </div>
+        <div class="detail-scroll">
+          <div class="detail-header">
+            <div class="dh-top">
+              <span class="dc-id">DEF-00421/A</span>
+              <span class="dc-class essential">Essential</span>
+              <span class="dc-unresolved" style="margin-left:auto">Unresolved</span>
+            </div>
+            <div class="dh-title">Valve handle exhibits progressive misalignment during actuation</div>
+            <div class="dh-asset">CV-100-XF · Crossfeed valve</div>
+            <div class="dh-tags">
+              <span class="dc-tag">mechanical-wear</span>
+              <span class="dc-tag">alignment</span>
+            </div>
+          </div>
+
+          <div class="detail-section">
+            <div class="ds-label">Defect description</div>
+            <div class="ds-text">Valve handle exhibits progressive misalignment during actuation, resulting in increased torque requirements and inconsistent positioning at end states. Observed deviation exceeds acceptable tolerance under sustained cyclic load.</div>
+          </div>
+
+          <div class="detail-section">
+            <div class="ds-label">Defect nature</div>
+            <div class="ds-text">Mechanical wear and fatigue within the valve stem coupling assembly, likely from prolonged cyclic stress and insufficient lubrication. Secondary contributing factors may include minor deformation under thermal expansion.</div>
+          </div>
+
+          <div class="detail-section">
+            <div class="ds-label">Resolution</div>
+            <div class="resolution-row">
+              <div class="res-dot"></div>
+              <div class="res-text">No resolution recorded — defect remains open.</div>
+            </div>
+          </div>
+
+          <div class="detail-section">
+            <div class="ds-label">Supporting document</div>
+            <div class="doc-row">
+              <span class="doc-path">\\network-share\engineering\defects\DEF-00421\report.pdf</span>
+              <button class="copy-btn">copy</button>
+            </div>
+          </div>
+
+          <div class="detail-section">
+            <div class="ds-label">Reported details</div>
+            <div class="meta-grid">
+              <div class="meta-item"><div class="meta-key">Date reported</div><div class="meta-val">15 Jan 2025</div></div>
+              <div class="meta-item"><div class="meta-key">Reported by</div><div class="meta-val">J. Smith</div></div>
+              <div class="meta-item"><div class="meta-key">Discipline</div><div class="meta-val">Mechanical</div></div>
+              <div class="meta-item"><div class="meta-key">Location</div><div class="meta-val">Zone 4 · Bay 2</div></div>
+            </div>
+          </div>
+
+          <div class="detail-section">
+            <div class="ds-label">Also affected</div>
+            <div class="affected-list">
+              <div class="affected-row">
+                <span class="aff-letter">A</span>
+                <span class="aff-tag">CV-100-XF</span>
+                <span class="curr-badge">current</span>
+              </div>
+              <div class="affected-row">
+                <span class="aff-letter">B</span>
+                <span class="aff-tag">CV-101-YZ</span>
+              </div>
+              <div class="affected-row">
+                <span class="aff-letter">C</span>
+                <span class="aff-tag">CV-102-AB</span>
+              </div>
+              <div class="affected-row">
+                <span class="aff-letter">D</span>
+                <span class="aff-tag">CV-103-FD-CROSSFEED-SECONDARY-BYPASS</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function openDetail() {
+  document.querySelectorAll('.defect-card').forEach(function(c) { c.style.opacity = '0.4'; });
+  setTimeout(function() {
+    document.querySelectorAll('.defect-card').forEach(function(c) { c.style.opacity = '1'; });
+  }, 200);
+}
+
+function filterClass(cls) {
+  var pills = document.querySelectorAll('.sc-pill');
+  pills.forEach(function(p) {
+    if(p.classList.contains(cls)) { p.classList.toggle('dimmed'); }
+    else { p.classList.toggle('dimmed'); }
+  });
+}
+
+function setView(view, btn) {
+  var panel = document.getElementById('list-panel');
+  panel.dataset.view = view;
+  document.querySelectorAll('.vt-btn').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  var count = document.getElementById('result-count');
+  if (view === 'by-item') {
+    count.textContent = '5 items · 6 defects';
+  } else {
+    count.textContent = '6 defects';
+  }
+}
+
+function toggleItem(header) {
+  header.closest('.item-card').classList.toggle('collapsed');
+}
+</script>

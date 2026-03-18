@@ -1,0 +1,9 @@
+# Local tooling (Superpowers brainstorm artifacts)
+.superpowers/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/

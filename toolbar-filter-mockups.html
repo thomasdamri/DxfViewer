@@ -1,0 +1,1606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Keywords Filter · Interaction Pattern Mockups</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Sans:ital,wght@0,400;0,500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --sans: 'IBM Plex Sans', system-ui, sans-serif;
+  --mono: 'IBM Plex Mono', monospace;
+
+  --text-primary:   #1A1A18;
+  --text-secondary: #5F5E5A;
+  --text-tertiary:  #888780;
+  --bg-primary:     #FFFFFF;
+  --bg-secondary:   #F6F5F2;
+  --bg-page:        #EDECEA;
+  --border:         rgba(0,0,0,0.11);
+  --border-md:      rgba(0,0,0,0.18);
+
+  /* Classification — exact per CLAUDE.md */
+  --cl-critical:    #A32D2D; --cl-critical-bg:    #FCEBEB;
+  --cl-essential:   #BA7517; --cl-essential-bg:   #FAEEDA;
+  --cl-routine:     #185FA5; --cl-routine-bg:     #E6F1FB;
+  --cl-monitoring:  #0F6E56; --cl-monitoring-bg:  #E1F5EE;
+  --cl-deferred:    #888780; --cl-deferred-bg:    #F1EFE8;
+}
+
+/* ── PAGE ── */
+body {
+  font-family: var(--sans);
+  background: var(--bg-page);
+  color: var(--text-primary);
+  padding: 44px 36px 96px;
+}
+.page { max-width: 1320px; margin: 0 auto; }
+
+.page-heading {
+  margin-bottom: 52px;
+  padding-bottom: 20px;
+  border-bottom: 0.5px solid var(--border-md);
+}
+.page-heading h1 {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 5px;
+  letter-spacing: -0.01em;
+}
+.page-heading p {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-tertiary);
+  letter-spacing: 0.03em;
+}
+
+/* ── SECTION ── */
+.pattern-section { margin-bottom: 72px; }
+
+.section-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+.section-letter {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text-tertiary);
+  background: var(--bg-secondary);
+  border: 0.5px solid var(--border-md);
+  border-radius: 4px;
+  padding: 2px 6px;
+  letter-spacing: 0.06em;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.section-head h2 {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+.section-tradeoff {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-tertiary);
+  letter-spacing: 0.02em;
+  line-height: 1.7;
+}
+
+.panel-row {
+  display: flex;
+  gap: 28px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.panel-wrap {}
+.panel-state-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  margin-bottom: 9px;
+}
+
+/* ── PANEL FRAME ── */
+.panel {
+  width: 350px;
+  background: var(--bg-primary);
+  border: 0.5px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── PANEL TITLE BAR ── */
+.ptb {
+  border-bottom: 0.5px solid var(--border);
+  flex-shrink: 0;
+}
+.ptb-asset {
+  display: block;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-primary);
+  padding: 10px 14px 7px;
+  letter-spacing: 0.02em;
+}
+.ptb-tabs {
+  display: flex;
+  padding: 0 4px;
+}
+.ptb-tab {
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--text-tertiary);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 6px 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+.ptb-tab.active {
+  color: var(--text-primary);
+  border-bottom-color: var(--text-primary);
+  font-weight: 500;
+}
+.tab-count {
+  font-family: var(--mono);
+  font-size: 9px;
+  background: var(--text-primary);
+  color: #fff;
+  border-radius: 100px;
+  padding: 1px 5px;
+  font-weight: 500;
+}
+.ptb-tab:not(.active) .tab-count {
+  background: var(--bg-secondary);
+  color: var(--text-tertiary);
+  border: 0.5px solid var(--border);
+}
+
+/* ── TOOLBAR ── */
+.toolbar {
+  border-bottom: 0.5px solid var(--border);
+  flex-shrink: 0;
+  padding: 8px 0 8px;
+}
+
+.toolbar-toggle {
+  display: flex;
+  margin: 0 14px 7px;
+  border: 0.5px solid var(--border-md);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.toggle-btn {
+  flex: 1;
+  font-family: var(--sans);
+  font-size: 11px;
+  color: var(--text-tertiary);
+  background: var(--bg-secondary);
+  border: none;
+  padding: 5px 0;
+  cursor: pointer;
+  text-align: center;
+}
+.toggle-btn + .toggle-btn { border-left: 0.5px solid var(--border-md); }
+.toggle-btn.active {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.controls-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0 14px;
+  margin-bottom: 7px;
+}
+.result-count {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.search-input {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--bg-secondary);
+  border: 0.5px solid var(--border);
+  border-radius: 5px;
+  padding: 0 8px;
+  height: 26px;
+  min-width: 0;
+}
+.search-icon {
+  font-size: 13px;
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+  line-height: 1;
+  margin-top: -1px;
+}
+.search-input input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: 11px;
+  font-family: var(--sans);
+  color: var(--text-primary);
+  outline: none;
+  min-width: 0;
+}
+.ctrl-btn {
+  font-family: var(--sans);
+  font-size: 11px;
+  color: var(--text-secondary);
+  background: var(--bg-primary);
+  border: 0.5px solid var(--border-md);
+  border-radius: 5px;
+  padding: 0 8px;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+.ctrl-btn.kw-active {
+  background: var(--cl-routine-bg);
+  border-color: #B5D4F4;
+  color: var(--cl-routine);
+  font-weight: 500;
+}
+.ctrl-btn.kw-open {
+  background: var(--bg-secondary);
+  border-color: var(--border-md);
+  color: var(--text-primary);
+}
+
+.status-filter-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0 14px;
+}
+.sfc {
+  font-family: var(--mono);
+  font-size: 10px;
+  background: var(--bg-secondary);
+  border: 0.5px solid var(--border);
+  border-radius: 100px;
+  padding: 3px 9px;
+  cursor: pointer;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.sfc.active {
+  background: var(--text-primary);
+  color: #fff;
+  border-color: transparent;
+}
+.sfc-live.active   { background: #FCEBEB; color: #A32D2D; border-color: rgba(163,45,45,0.25); }
+.sfc-closed.active { background: #F1EFE8; color: #888780; border-color: rgba(136,135,128,0.3); }
+.sfc-n { font-weight: 500; }
+
+/* ── PATTERN A: DROPDOWN ── */
+.kw-dropdown {
+  margin: 6px 14px 4px;
+  border: 0.5px solid var(--border-md);
+  border-radius: 8px;
+  background: var(--bg-primary);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.kwd-search {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-bottom: 0.5px solid var(--border);
+  background: var(--bg-secondary);
+}
+.kwd-search input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: 11px;
+  font-family: var(--sans);
+  color: var(--text-primary);
+  outline: none;
+}
+.kwd-list {
+  max-height: 196px;
+  overflow-y: auto;
+  padding: 3px 0;
+}
+.kwd-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 10px;
+  cursor: pointer;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-secondary);
+  user-select: none;
+}
+.kwd-item input[type="checkbox"] {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+  accent-color: var(--cl-routine);
+  cursor: pointer;
+}
+.kwd-item.checked { color: var(--text-primary); font-weight: 500; }
+.kwd-sep {
+  height: 0.5px;
+  background: var(--border);
+  margin: 3px 0;
+}
+
+/* ── PATTERN B: INLINE EXPAND ── */
+.kw-expand-band {
+  border-top: 0.5px solid var(--border);
+  padding: 9px 14px 10px;
+  flex-shrink: 0;
+}
+.kw-expand-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.kw-expand-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.kw-expand-close {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-tertiary);
+  cursor: pointer;
+}
+.kw-chip-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 4px;
+}
+.kw-chip {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-secondary);
+  background: var(--bg-secondary);
+  border: 0.5px solid var(--border);
+  border-radius: 4px;
+  padding: 4px 7px;
+  cursor: pointer;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.kw-chip.selected {
+  background: var(--cl-routine-bg);
+  border-color: #B5D4F4;
+  color: var(--cl-routine);
+  font-weight: 500;
+}
+
+/* ── PATTERN C: POPOVER + ACTIVE CHIPS ── */
+.kw-popover {
+  margin: 4px 14px 4px;
+  border: 0.5px solid var(--border-md);
+  border-radius: 8px;
+  background: var(--bg-primary);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.kw-pop-search {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 10px;
+  border-bottom: 0.5px solid var(--border);
+  background: var(--bg-secondary);
+}
+.kw-pop-search input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: 11px;
+  font-family: var(--sans);
+  color: var(--text-primary);
+  outline: none;
+}
+.kw-pop-body {
+  padding: 8px 9px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 220px;
+  overflow-y: auto;
+}
+.kw-pop-slabel {
+  font-family: var(--mono);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--text-tertiary);
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.kw-pop-count { font-weight: 500; }
+.kw-pop-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.kw-pop-chip {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-secondary);
+  background: var(--bg-secondary);
+  border: 0.5px solid var(--border);
+  border-radius: 4px;
+  padding: 3px 8px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.kw-pop-chip.selected {
+  background: var(--cl-routine-bg);
+  border-color: #B5D4F4;
+  color: var(--cl-routine);
+  font-weight: 500;
+}
+.kw-pop-section--empty {
+  opacity: 0.45;
+}
+.kw-pop-empty-note {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-tertiary);
+  padding: 1px 0;
+}
+
+.active-kw-strip {
+  border-top: 0.5px solid var(--border);
+  padding: 6px 14px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+  flex-shrink: 0;
+}
+.akw-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-tertiary);
+  margin-right: 2px;
+  flex-shrink: 0;
+}
+.akw-chip {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--cl-routine);
+  background: var(--cl-routine-bg);
+  border: 0.5px solid #B5D4F4;
+  border-radius: 4px;
+  padding: 2px 6px 2px 8px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.akw-x {
+  opacity: 0.55;
+  font-size: 11px;
+  line-height: 1;
+  margin-top: -1px;
+}
+
+/* ── DEFECT CARDS ── */
+.card-list {
+  padding: 8px 0 4px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.card-list.grow {
+  flex: 1;
+  overflow-y: auto;
+}
+.defect-card {
+  margin: 0 10px 6px;
+  background: var(--bg-primary);
+  border: 0.5px solid var(--border);
+  border-left-width: 3px;
+  border-left-style: solid;
+  border-radius: 12px;
+  padding: 10px 12px 9px 11px;
+  cursor: pointer;
+}
+.defect-card.critical  { border-left-color: var(--cl-critical); }
+.defect-card.essential { border-left-color: var(--cl-essential); }
+.defect-card.routine   { border-left-color: var(--cl-routine); }
+.defect-card.monitoring{ border-left-color: var(--cl-monitoring); }
+.defect-card.deferred  { border-left-color: var(--cl-deferred); }
+.defect-card.stub      { opacity: 0.38; }
+
+.dc-top {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 5px;
+  flex-wrap: nowrap;
+  min-width: 0;
+}
+.dc-id {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+.dc-dot { color: var(--text-tertiary); font-size: 10px; flex-shrink: 0; }
+.dc-class {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+.dc-class.critical  { color: var(--cl-critical); }
+.dc-class.essential { color: var(--cl-essential); }
+.dc-class.routine   { color: var(--cl-routine); }
+.dc-class.monitoring{ color: var(--cl-monitoring); }
+.dc-class.deferred  { color: var(--cl-deferred); }
+.dc-spacer { flex: 1; min-width: 8px; }
+
+/* Status badges — per CLAUDE.md */
+.dc-status {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  padding: 2px 7px;
+  border-radius: 100px;
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+  flex-shrink: 0;
+}
+.dc-status.live      { background: #FCEBEB; color: #A32D2D; }
+.dc-status.scheduled { background: #E6F1FB; color: #185FA5; }
+.dc-status.closed    { background: #F1EFE8; color: #888780; border: 0.5px solid rgba(136,135,128,0.35); }
+
+.dc-title {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-primary);
+  line-height: 1.4;
+  margin-bottom: 4px;
+}
+.dc-asset {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+.dc-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.dc-tags { display: flex; gap: 4px; flex-wrap: wrap; }
+.dc-tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-tertiary);
+  background: var(--bg-secondary);
+  border: 0.5px solid var(--border);
+  border-radius: 3px;
+  padding: 1px 5px;
+}
+.dc-other {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--cl-routine);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ── DIVIDER ── */
+hr.div { border: none; border-top: 0.5px solid var(--border-md); margin: 0 0 72px; }
+
+/* ── COMPLETE PANEL ── */
+.panel--full { height: 680px; }
+
+/* ── SCRIM HINT (for A / C open states) ── */
+.card-scrim {
+  background: linear-gradient(to bottom, rgba(246,245,242,0.85) 0%, rgba(246,245,242,0.2) 100%);
+}
+/* Override: no gradients — use flat scrim */
+.card-scrim {
+  background: rgba(246,245,242,0.82);
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="page-heading">
+    <h1>Toolbar Chrome &mdash; Keywords Filter Interaction Patterns</h1>
+    <p>Panel width 350px &nbsp;·&nbsp; IBM Plex Stack &nbsp;·&nbsp; 25 keyword identifiers &nbsp;·&nbsp; Three interaction models</p>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       PATTERN A — DROPDOWN POPOVER
+  ════════════════════════════════════════ -->
+  <section class="pattern-section">
+    <div class="section-head">
+      <span class="section-letter">A</span>
+      <div>
+        <h2>Dropdown popover with search + checkboxes</h2>
+        <p class="section-tradeoff">
+          Familiar interaction &nbsp;·&nbsp; Good discoverability (standard control paradigm) &nbsp;·&nbsp; Low learning cost<br>
+          Overlay conceals list content while open &nbsp;·&nbsp; Requires explicit dismiss to return to results &nbsp;·&nbsp; Search reduces interaction cost for large sets
+        </p>
+      </div>
+    </div>
+    <div class="panel-row">
+
+      <!-- A1: Default -->
+      <div class="panel-wrap">
+        <div class="panel-state-label">Default</div>
+        <div class="panel">
+          <div class="ptb">
+            <span class="ptb-asset">FV-101 &middot; Crossfeed valve</span>
+            <div class="ptb-tabs">
+              <button class="ptb-tab">General</button>
+              <button class="ptb-tab active">Defects <span class="tab-count">4</span></button>
+              <button class="ptb-tab">History</button>
+            </div>
+          </div>
+          <div class="toolbar">
+            <div class="toolbar-toggle">
+              <button class="toggle-btn active">By Defect</button>
+              <button class="toggle-btn">By Item</button>
+            </div>
+            <div class="controls-row">
+              <span class="result-count">12</span>
+              <div class="search-input">
+                <span class="search-icon">⌕</span>
+                <input type="text" placeholder="Search&hellip;" readonly>
+              </div>
+              <button class="ctrl-btn">Priority ↓</button>
+              <button class="ctrl-btn">Keywords ▾</button>
+            </div>
+            <div class="status-filter-row">
+              <button class="sfc active">All</button>
+              <button class="sfc sfc-live">Live <span class="sfc-n">8</span></button>
+              <button class="sfc sfc-closed">Closed <span class="sfc-n">4</span></button>
+            </div>
+          </div>
+          <div class="card-list">
+            <div class="defect-card essential">
+              <div class="dc-top">
+                <span class="dc-id">DEF-00421/A</span><span class="dc-dot">&middot;</span>
+                <span class="dc-class essential">Essential</span>
+                <span class="dc-spacer"></span>
+                <span class="dc-status live">LIVE</span>
+              </div>
+              <div class="dc-title">Valve handle exhibits progressive misalignment during actuation</div>
+              <div class="dc-asset">CV-100-XF &middot; Crossfeed valve</div>
+              <div class="dc-footer">
+                <div class="dc-tags"><span class="dc-tag">mechanical-wear</span><span class="dc-tag">alignment</span></div>
+              </div>
+            </div>
+            <div class="defect-card routine">
+              <div class="dc-top">
+                <span class="dc-id">DEF-00389/B</span><span class="dc-dot">&middot;</span>
+                <span class="dc-class routine">Routine</span>
+                <span class="dc-spacer"></span>
+                <span class="dc-status scheduled">SCHEDULED</span>
+              </div>
+              <div class="dc-title">Pressure relief valve fails to reseat after actuation</div>
+              <div class="dc-asset">PRV-204-AK &middot; Relief valve, north header</div>
+              <div class="dc-footer">
+                <div class="dc-tags"><span class="dc-tag">valve-seating</span><span class="dc-tag">pressure-loss</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- A2: Open -->
+      <div class="panel-wrap">
+        <div class="panel-state-label">Open</div>
+        <div class="panel">
+          <div class="ptb">
+            <span class="ptb-asset">FV-101 &middot; Crossfeed valve</span>
+            <div class="ptb-tabs">
+              <button class="ptb-tab">General</button>
+              <button class="ptb-tab active">Defects <span class="tab-count">4</span></button>
+              <button class="ptb-tab">History</button>
+            </div>
+          </div>
+          <div class="toolbar">
+            <div class="toolbar-toggle">
+              <button class="toggle-btn active">By Defect</button>
+              <button class="toggle-btn">By Item</button>
+            </div>
+            <div class="controls-row">
+              <span class="result-count">12</span>
+              <div class="search-input">
+                <span class="search-icon">⌕</span>
+                <input type="text" placeholder="Search&hellip;" readonly>
+              </div>
+              <button class="ctrl-btn">Priority ↓</button>
+              <button class="ctrl-btn kw-open">Keywords ▾</button>
+            </div>
+            <div class="status-filter-row">
+              <button class="sfc active">All</button>
+              <button class="sfc sfc-live">Live <span class="sfc-n">8</span></button>
+              <button class="sfc sfc-closed">Closed <span class="sfc-n">4</span></button>
+            </div>
+          </div>
+          <!-- Dropdown -->
+          <div class="kw-dropdown">
+            <div class="kwd-search">
+              <span class="search-icon">⌕</span>
+              <input type="text" placeholder="Search keywords&hellip;" readonly>
+            </div>
+            <div class="kwd-list">
+              <label class="kwd-item"><input type="checkbox" disabled> actuator</label>
+              <label class="kwd-item"><input type="checkbox" disabled> alignment</label>
+              <label class="kwd-item"><input type="checkbox" disabled> blockage</label>
+              <label class="kwd-item"><input type="checkbox" disabled> calibration</label>
+              <label class="kwd-item"><input type="checkbox" disabled> cavitation</label>
+              <label class="kwd-item"><input type="checkbox" disabled> coating-failure</label>
+              <label class="kwd-item"><input type="checkbox" disabled> corrosion</label>
+              <label class="kwd-item"><input type="checkbox" disabled> cracking</label>
+              <label class="kwd-item"><input type="checkbox" disabled> deformation</label>
+              <label class="kwd-item"><input type="checkbox" disabled> electrical-fault</label>
+              <label class="kwd-item"><input type="checkbox" disabled> erosion</label>
+              <label class="kwd-item"><input type="checkbox" disabled> fatigue</label>
+              <label class="kwd-item"><input type="checkbox" disabled> fouling</label>
+              <label class="kwd-item"><input type="checkbox" disabled> instrument-drift</label>
+              <label class="kwd-item"><input type="checkbox" disabled> isolation</label>
+              <label class="kwd-item"><input type="checkbox" disabled> leakage</label>
+              <label class="kwd-item"><input type="checkbox" disabled> material-defect</label>
+              <label class="kwd-item"><input type="checkbox" disabled> mechanical-wear</label>
+              <label class="kwd-item"><input type="checkbox" disabled> pressure-loss</label>
+              <label class="kwd-item"><input type="checkbox" disabled> seal-failure</label>
+              <label class="kwd-item"><input type="checkbox" disabled> structural</label>
+              <label class="kwd-item"><input type="checkbox" disabled> thermal-expansion</label>
+              <label class="kwd-item"><input type="checkbox" disabled> thread-wear</label>
+              <label class="kwd-item"><input type="checkbox" disabled> valve-seating</label>
+              <label class="kwd-item"><input type="checkbox" disabled> vibration</label>
+            </div>
+          </div>
+          <!-- one muted stub card to show list is beneath -->
+          <div class="card-list card-scrim">
+            <div class="defect-card essential stub">
+              <div class="dc-top">
+                <span class="dc-id">DEF-00421/A</span><span class="dc-dot">&middot;</span>
+                <span class="dc-class essential">Essential</span>
+                <span class="dc-spacer"></span>
+                <span class="dc-status live">LIVE</span>
+              </div>
+              <div class="dc-title">Valve handle exhibits progressive misalignment during actuation</div>
+              <div class="dc-asset">CV-100-XF &middot; Crossfeed valve</div>
+              <div class="dc-footer">
+                <div class="dc-tags"><span class="dc-tag">mechanical-wear</span><span class="dc-tag">alignment</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- A3: Selected (2 keywords) -->
+      <div class="panel-wrap">
+        <div class="panel-state-label">Selected &mdash; 2 keywords active</div>
+        <div class="panel">
+          <div class="ptb">
+            <span class="ptb-asset">FV-101 &middot; Crossfeed valve</span>
+            <div class="ptb-tabs">
+              <button class="ptb-tab">General</button>
+              <button class="ptb-tab active">Defects <span class="tab-count">4</span></button>
+              <button class="ptb-tab">History</button>
+            </div>
+          </div>
+          <div class="toolbar">
+            <div class="toolbar-toggle">
+              <button class="toggle-btn active">By Defect</button>
+              <button class="toggle-btn">By Item</button>
+            </div>
+            <div class="controls-row">
+              <span class="result-count">3</span>
+              <div class="search-input">
+                <span class="search-icon">⌕</span>
+                <input type="text" placeholder="Search&hellip;" readonly>
+              </div>
+              <button class="ctrl-btn">Priority ↓</button>
+              <button class="ctrl-btn kw-active">Keywords (2) ▾</button>
+            </div>
+            <div class="status-filter-row">
+              <button class="sfc active">All</button>
+              <button class="sfc sfc-live">Live <span class="sfc-n">2</span></button>
+              <button class="sfc sfc-closed">Closed <span class="sfc-n">1</span></button>
+            </div>
+          </div>
+          <!-- Dropdown — checked items floated to top -->
+          <div class="kw-dropdown">
+            <div class="kwd-search">
+              <span class="search-icon">⌕</span>
+              <input type="text" placeholder="Search keywords&hellip;" readonly>
+            </div>
+            <div class="kwd-list">
+              <label class="kwd-item checked"><input type="checkbox" checked disabled> mechanical-wear</label>
+              <label class="kwd-item checked"><input type="checkbox" checked disabled> alignment</label>
+              <div class="kwd-sep"></div>
+              <label class="kwd-item"><input type="checkbox" disabled> actuator</label>
+              <label class="kwd-item"><input type="checkbox" disabled> blockage</label>
+              <label class="kwd-item"><input type="checkbox" disabled> calibration</label>
+              <label class="kwd-item"><input type="checkbox" disabled> cavitation</label>
+              <label class="kwd-item"><input type="checkbox" disabled> coating-failure</label>
+              <label class="kwd-item"><input type="checkbox" disabled> corrosion</label>
+              <label class="kwd-item"><input type="checkbox" disabled> cracking</label>
+              <label class="kwd-item"><input type="checkbox" disabled> deformation</label>
+              <label class="kwd-item"><input type="checkbox" disabled> electrical-fault</label>
+              <label class="kwd-item"><input type="checkbox" disabled> erosion</label>
+              <label class="kwd-item"><input type="checkbox" disabled> fatigue</label>
+              <label class="kwd-item"><input type="checkbox" disabled> fouling</label>
+              <label class="kwd-item"><input type="checkbox" disabled> instrument-drift</label>
+              <label class="kwd-item"><input type="checkbox" disabled> isolation</label>
+              <label class="kwd-item"><input type="checkbox" disabled> leakage</label>
+              <label class="kwd-item"><input type="checkbox" disabled> material-defect</label>
+              <label class="kwd-item"><input type="checkbox" disabled> pressure-loss</label>
+              <label class="kwd-item"><input type="checkbox" disabled> seal-failure</label>
+              <label class="kwd-item"><input type="checkbox" disabled> structural</label>
+              <label class="kwd-item"><input type="checkbox" disabled> thermal-expansion</label>
+              <label class="kwd-item"><input type="checkbox" disabled> thread-wear</label>
+              <label class="kwd-item"><input type="checkbox" disabled> valve-seating</label>
+              <label class="kwd-item"><input type="checkbox" disabled> vibration</label>
+            </div>
+          </div>
+          <div class="card-list card-scrim">
+            <div class="defect-card essential stub">
+              <div class="dc-top">
+                <span class="dc-id">DEF-00421/A</span><span class="dc-dot">&middot;</span>
+                <span class="dc-class essential">Essential</span>
+                <span class="dc-spacer"></span>
+                <span class="dc-status live">LIVE</span>
+              </div>
+              <div class="dc-title">Valve handle exhibits progressive misalignment during actuation</div>
+              <div class="dc-asset">CV-100-XF &middot; Crossfeed valve</div>
+              <div class="dc-footer">
+                <div class="dc-tags"><span class="dc-tag">mechanical-wear</span><span class="dc-tag">alignment</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /panel-row -->
+  </section>
+
+  <hr class="div">
+
+  <!-- ════════════════════════════════════════
+       PATTERN B — INLINE EXPAND
+  ════════════════════════════════════════ -->
+  <section class="pattern-section">
+    <div class="section-head">
+      <span class="section-letter">B</span>
+      <div>
+        <h2>Inline expand &mdash; keyword chip grid</h2>
+        <p class="section-tradeoff">
+          All 25 options scannable without an overlay &nbsp;·&nbsp; No popover to dismiss &nbsp;·&nbsp; Selections always visible<br>
+          Pushes list content down while open &nbsp;·&nbsp; Resident band takes permanent vertical space &nbsp;·&nbsp; Higher click cost if toggling open/closed frequently
+        </p>
+      </div>
+    </div>
+    <div class="panel-row">
+
+      <!-- B1: Default (collapsed) -->
+      <div class="panel-wrap">
+        <div class="panel-state-label">Default &mdash; collapsed</div>
+        <div class="panel">
+          <div class="ptb">
+            <span class="ptb-asset">FV-101 &middot; Crossfeed valve</span>
+            <div class="ptb-tabs">
+              <button class="ptb-tab">General</button>
+              <button class="ptb-tab active">Defects <span class="tab-count">4</span></button>
+              <button class="ptb-tab">History</button>
+            </div>
+          </div>
+          <div class="toolbar">
+            <div class="toolbar-toggle">
+              <button class="toggle-btn active">By Defect</button>
+              <button class="toggle-btn">By Item</button>
+            </div>
+            <div class="controls-row">
+              <span class="result-count">12</span>
+              <div class="search-input">
+                <span class="search-icon">⌕</span>
+                <input type="text" placeholder="Search&hellip;" readonly>
+              </div>
+              <button class="ctrl-btn">Priority ↓</button>
+              <button class="ctrl-btn">Keywords ▾</button>
+            </div>
+            <div class="status-filter-row">
+              <button class="sfc active">All</button>
+              <button class="sfc sfc-live">Live <span class="sfc-n">8</span></button>
+              <button class="sfc sfc-closed">Closed <span class="sfc-n">4</span></button>
+            </div>
+          </div>
+          <div class="card-list">
+            <div class="defect-card essential">
+              <div class="dc-top">
+                <span class="dc-id">DEF-00421/A</span><span class="dc-dot">&middot;</span>
+                <span class="dc-class essential">Essential</span>
+                <span class="dc-spacer"></span>
+                <span class="dc-status live">LIVE</span>
+              </div>
+              <div class="dc-title">Valve handle exhibits progressive misalignment during actuation</div>
+              <div class="dc-asset">CV-100-XF &middot; Crossfeed valve</div>
+              <div class="dc-footer">
+                <div class="dc-tags"><span class="dc-tag">mechanical-wear</span><span class="dc-tag">alignment</span></div>
+              </div>
+            </div>
+            <div class="defect-card routine">
+              <div class="dc-top">
+                <span class="dc-id">DEF-00389/B</span><span class="dc-dot">&middot;</span>
+                <span class="dc-class routine">Routine</span>
+                <span class="dc-spacer"></span>
+                <span class="dc-status scheduled">SCHEDULED</span>
+              </div>
+              <div class="dc-title">Pressure relief valve fails to reseat after actuation</div>
+              <div class="dc-asset">PRV-204-AK &middot; Relief valve, north header</div>
+              <div class="dc-footer">
+                <div class="dc-tags"><span class="dc-tag">valve-seating</span><span class="dc-tag">pressure-loss</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- B2: Open (expanded, nothing selected) -->
+      <div class="panel-wrap">
+        <div class="panel-state-label">Open &mdash; expanded, no selection</div>
+        <div class="panel">
+          <div class="ptb">
+            <span class="ptb-asset">FV-101 &middot; Crossfeed valve</span>
+            <div class="ptb-tabs">
+              <button class="ptb-tab">General</button>
+              <button class="ptb-tab active">Defects <span class="tab-count">4</span></button>
+              <button class="ptb-tab">History</button>
+            </div>
+          </div>
+          <div class="toolbar">
+            <div class="toolbar-toggle">
+              <button class="toggle-btn active">By Defect</button>
+              <button class="toggle-btn">By Item</button>
+            </div>
+            <div class="controls-row">
+              <span class="result-count">12</span>
+              <div class="search-input">
+                <span class="search-icon">⌕</span>
+                <input type="text" placeholder="Search&hellip;" readonly>
+              </div>
+              <button class="ctrl-btn">Priority ↓</button>
+              <button class="ctrl-btn kw-open">Keywords ▴</button>
+            </div>
+            <div class="status-filter-row">
+              <button class="sfc active">All</button>
+              <button class="sfc sfc-live">Live <span class="sfc-n">8</span></button>
+              <button class="sfc sfc-closed">Closed <span class="sfc-n">4</span></button>
+            </div>
+          </div>
+          <!-- Expanded keyword grid -->
+          <div class="kw-expand-band">
+            <div class="kw-expand-head">
+              <span class="kw-expand-label">Keywords</span>
+              <span class="kw-expand-close">Done ▴</span>
+            </div>
+            <div class="kw-chip-grid">
+              <button class="kw-chip">actuator</button>
+              <button class="kw-chip">alignment</button>
+              <button class="kw-chip">blockage</button>
+              <button class="kw-chip">calibration</button>
+              <button class="kw-chip">cavitation</button>
+              <button class="kw-chip">coating-failure</button>
+              <button class="kw-chip">corrosion</button>
+              <button class="kw-chip">cracking</button>
+              <button class="kw-chip">deformation</button>
+              <button class="kw-chip">electrical-fault</button>
+              <button class="kw-chip">erosion</button>
+              <button class="kw-chip">fatigue</button>
+              <button class="kw-chip">fouling</button>
+              <button class="kw-chip">instrument-drift</button>
+              <button class="kw-chip">isolation</button>
+              <button class="kw-chip">leakage</button>
+              <button class="kw-chip">material-defect</button>
+              <button class="kw-chip">mechanical-wear</button>
+              <button class="kw-chip">pressure-loss</button>
+              <button class="kw-chip">seal-failure</button>
+              <button class="kw-chip">structural</button>
+              <button class="kw-chip">thermal-expansion</button>
+              <button class="kw-chip">thread-wear</button>
+              <button class="kw-chip">valve-seating</button>
+              <button class="kw-chip">vibration</button>
+            </div>
+          </div>
+          <div class="card-list">
+            <div class="defect-card essential stub">
+              <div class="dc-top">
+                <span class="dc-id">DEF-00421/A</span><span class="dc-dot">&middot;</span>
+                <span class="dc-class essential">Essential</span>
+                <span class="dc-spacer"></span>
+                <span class="dc-status live">LIVE</span>
+              </div>
+              <div class="dc-title">Valve handle exhibits progressive misalignment during actuation</div>
+              <div class="dc-asset">CV-100-XF &middot; Crossfeed valve</div>
+              <div class="dc-footer">
+                <div class="dc-tags"><span class="dc-tag">mechanical-wear</span><span class="dc-tag">alignment</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- B3: Selected (2 chips highlighted) -->
+      <div class="panel-wrap">
+        <div class="panel-state-label">Selected &mdash; 2 keywords active</div>
+        <div class="panel">
+          <div class="ptb">
+            <span class="ptb-asset">FV-101 &middot; Crossfeed valve</span>
+            <div class="ptb-tabs">
+              <button class="ptb-tab">General</button>
+              <button class="ptb-tab active">Defects <span class="tab-count">4</span></button>
+              <button class="ptb-tab">History</button>
+            </div>
+          </div>
+          <div class="toolbar">
+            <div class="toolbar-toggle">
+              <button class="toggle-btn active">By Defect</button>
+              <button class="toggle-btn">By Item</button>
+            </div>
+            <div class="controls-row">
+              <span class="result-count">3</span>
+              <div class="search-input">
+                <span class="search-icon">⌕</span>
+                <input type="text" placeholder="Search&hellip;" readonly>
+              </div>
+              <button class="ctrl-btn">Priority ↓</button>
+              <button class="ctrl-btn kw-active">Keywords (2) ▴</button>
+            </div>
+            <div class="status-filter-row">
+              <button class="sfc active">All</button>
+              <button class="sfc sfc-live">Live <span class="sfc-n">2</span></button>
+              <button class="sfc sfc-closed">Closed <span class="sfc-n">1</span></button>
+            </div>
+          </div>
+          <div class="kw-expand-band">
+            <div class="kw-expand-head">
+              <span class="kw-expand-label">Keywords &mdash; 2 selected</span>
+              <span class="kw-expand-close">Done ▴</span>
+            </div>
+            <div class="kw-chip-grid">
+              <button class="kw-chip">actuator</button>
+              <button class="kw-chip selected">alignment</button>
+              <button class="kw-chip">blockage</button>
+              <button class="kw-chip">calibration</button>
+              <button class="kw-chip">cavitation</button>
+              <button class="kw-chip">coating-failure</button>
+              <button class="kw-chip">corrosion</button>
+              <button class="kw-chip">cracking</button>
+              <button class="kw-chip">deformation</button>
+              <button class="kw-chip">electrical-fault</button>
+              <button class="kw-chip">erosion</button>
+              <button class="kw-chip">fatigue</button>
+              <button class="kw-chip">fouling</button>
+              <button class="kw-chip">instrument-drift</button>
+              <button class="kw-chip">isolation</button>
+              <button class="kw-chip">leakage</button>
+              <button class="kw-chip">material-defect</button>
+              <button class="kw-chip selected">mechanical-wear</button>
+              <button class="kw-chip">pressure-loss</button>
+              <button class="kw-chip">seal-failure</button>
+              <button class="kw-chip">structural</button>
+              <button class="kw-chip">thermal-expansion</button>
+              <button class="kw-chip">thread-wear</button>
+              <button class="kw-chip">valve-seating</button>
+              <button class="kw-chip">vibration</button>
+            </div>
+          </div>
+          <div class="card-list">
+            <div class="defect-card essential stub">
+              <div class="dc-top">
+                <span class="dc-id">DEF-00421/A</span><span class="dc-dot">&middot;</span>
+                <span class="dc-class essential">Essential</span>
+                <span class="dc-spacer"></span>
+                <span class="dc-status live">LIVE</span>
+              </div>
+              <div class="dc-title">Valve handle exhibits progressive misalignment during actuation</div>
+              <div class="dc-asset">CV-100-XF &middot; Crossfeed valve</div>
+              <div class="dc-footer">
+                <div class="dc-tags"><span class="dc-tag">mechanical-wear</span><span class="dc-tag">alignment</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /panel-row -->
+  </section>
+
+  <hr class="div">
+
+  <!-- ════════════════════════════════════════
+       PATTERN C — CHOSEN DIRECTION
+  ════════════════════════════════════════ -->
+  <section class="pattern-section">
+    <div class="section-head">
+      <span class="section-letter" style="background:var(--text-primary);color:#fff;border-color:transparent;">C ✓</span>
+      <div>
+        <h2>Filter popover with cross-section search &mdash; active chips row</h2>
+        <p class="section-tradeoff">
+          Single search input filters across all filter types simultaneously &nbsp;·&nbsp; New filter categories add a section to the same popover, no new toolbar button<br>
+          Active selections persist as visible, dismissible chips below the toolbar &nbsp;·&nbsp; Popover is transient &nbsp;·&nbsp; Filter state always readable without opening anything
+        </p>
+      </div>
+    </div>
+    <div class="panel-row">
+
+      <!-- C1: Default -->
+      <div class="panel-wrap">
+        <div class="panel-state-label">Default</div>
+        <div class="panel">
+          <div class="ptb">
+            <span class="ptb-asset">FV-101 &middot; Crossfeed valve</span>
+            <div class="ptb-tabs">
+              <button class="ptb-tab">General</button>
+              <button class="ptb-tab active">Defects <span class="tab-count">4</span></button>
+              <button class="ptb-tab">History</button>
+            </div>
+          </div>
+          <div class="toolbar">
+            <div class="toolbar-toggle">
+              <button class="toggle-btn active">By Defect</button>
+              <button class="toggle-btn">By Item</button>
+            </div>
+            <div class="controls-row">
+              <span class="result-count">12</span>
+              <div class="search-input">
+                <span class="search-icon">⌕</span>
+                <input type="text" placeholder="Search&hellip;" readonly>
+              </div>
+              <button class="ctrl-btn">Priority ↓</button>
+              <button class="ctrl-btn">Keywords ▾</button>
+            </div>
+            <div class="status-filter-row">
+              <button class="sfc active">All</button>
+              <button class="sfc sfc-live">Live <span class="sfc-n">8</span></button>
+              <button class="sfc sfc-closed">Closed <span class="sfc-n">4</span></button>
+            </div>
+          </div>
+          <div class="card-list">
+            <div class="defect-card essential">
+              <div class="dc-top">
+                <span class="dc-id">DEF-00421/A</span><span class="dc-dot">&middot;</span>
+                <span class="dc-class essential">Essential</span>
+                <span class="dc-spacer"></span>
+                <span class="dc-status live">LIVE</span>
+              </div>
+              <div class="dc-title">Valve handle exhibits progressive misalignment during actuation</div>
+              <div class="dc-asset">CV-100-XF &middot; Crossfeed valve</div>
+              <div class="dc-footer">
+                <div class="dc-tags"><span class="dc-tag">mechanical-wear</span><span class="dc-tag">alignment</span></div>
+              </div>
+            </div>
+            <div class="defect-card routine">
+              <div class="dc-top">
+                <span class="dc-id">DEF-00389/B</span><span class="dc-dot">&middot;</span>
+                <span class="dc-class routine">Routine</span>
+                <span class="dc-spacer"></span>
+                <span class="dc-status scheduled">SCHEDULED</span>
+              </div>
+              <div class="dc-title">Pressure relief valve fails to reseat after actuation</div>
+              <div class="dc-asset">PRV-204-AK &middot; Relief valve, north header</div>
+              <div class="dc-footer">
+                <div class="dc-tags"><span class="dc-tag">valve-seating</span><span class="dc-tag">pressure-loss</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- C2: Open — search + sections -->
+      <div class="panel-wrap">
+        <div class="panel-state-label">Open &mdash; search + sections</div>
+        <div class="panel">
+          <div class="ptb">
+            <span class="ptb-asset">FV-101 &middot; Crossfeed valve</span>
+            <div class="ptb-tabs">
+              <button class="ptb-tab">General</button>
+              <button class="ptb-tab active">Defects <span class="tab-count">4</span></button>
+              <button class="ptb-tab">History</button>
+            </div>
+          </div>
+          <div class="toolbar">
+            <div class="toolbar-toggle">
+              <button class="toggle-btn active">By Defect</button>
+              <button class="toggle-btn">By Item</button>
+            </div>
+            <div class="controls-row">
+              <span class="result-count">12</span>
+              <div class="search-input">
+                <span class="search-icon">⌕</span>
+                <input type="text" placeholder="Search&hellip;" readonly>
+              </div>
+              <button class="ctrl-btn">Priority ↓</button>
+              <button class="ctrl-btn kw-open">Filters ▾</button>
+            </div>
+            <div class="status-filter-row">
+              <button class="sfc active">All</button>
+              <button class="sfc sfc-live">Live <span class="sfc-n">8</span></button>
+              <button class="sfc sfc-closed">Closed <span class="sfc-n">4</span></button>
+            </div>
+          </div>
+          <div class="kw-popover">
+            <div class="kw-pop-search">
+              <span class="search-icon">⌕</span>
+              <input type="text" placeholder="Search filters&hellip;" readonly>
+            </div>
+            <div class="kw-pop-body">
+              <div class="kw-pop-section">
+                <div class="kw-pop-slabel">Keywords <span class="kw-pop-count">25</span></div>
+                <div class="kw-pop-grid">
+                  <button class="kw-pop-chip">actuator</button>
+                  <button class="kw-pop-chip">alignment</button>
+                  <button class="kw-pop-chip">blockage</button>
+                  <button class="kw-pop-chip">calibration</button>
+                  <button class="kw-pop-chip">cavitation</button>
+                  <button class="kw-pop-chip">coating-failure</button>
+                  <button class="kw-pop-chip">corrosion</button>
+                  <button class="kw-pop-chip">cracking</button>
+                  <button class="kw-pop-chip">deformation</button>
+                  <button class="kw-pop-chip">electrical-fault</button>
+                  <button class="kw-pop-chip">erosion</button>
+                  <button class="kw-pop-chip">fatigue</button>
+                  <button class="kw-pop-chip">fouling</button>
+                  <button class="kw-pop-chip">instrument-drift</button>
+                  <button class="kw-pop-chip">isolation</button>
+                  <button class="kw-pop-chip">leakage</button>
+                  <button class="kw-pop-chip">material-defect</button>
+                  <button class="kw-pop-chip">mechanical-wear</button>
+                  <button class="kw-pop-chip">pressure-loss</button>
+                  <button class="kw-pop-chip">seal-failure</button>
+                  <button class="kw-pop-chip">structural</button>
+                  <button class="kw-pop-chip">thermal-expansion</button>
+                  <button class="kw-pop-chip">thread-wear</button>
+                  <button class="kw-pop-chip">valve-seating</button>
+                  <button class="kw-pop-chip">vibration</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card-list card-scrim">
+            <div class="defect-card essential stub">
+              <div class="dc-top">
+                <span class="dc-id">DEF-00421/A</span><span class="dc-dot">&middot;</span>
+                <span class="dc-class essential">Essential</span>
+                <span class="dc-spacer"></span>
+                <span class="dc-status live">LIVE</span>
+              </div>
+              <div class="dc-title">Valve handle exhibits progressive misalignment during actuation</div>
+              <div class="dc-asset">CV-100-XF &middot; Crossfeed valve</div>
+              <div class="dc-footer">
+                <div class="dc-tags"><span class="dc-tag">mechanical-wear</span><span class="dc-tag">alignment</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- C3: Search active — "fail" typed, cross-section filtering -->
+      <div class="panel-wrap">
+        <div class="panel-state-label">Search active &mdash; &ldquo;fail&rdquo; across all sections</div>
+        <div class="panel">
+          <div class="ptb">
+            <span class="ptb-asset">FV-101 &middot; Crossfeed valve</span>
+            <div class="ptb-tabs">
+              <button class="ptb-tab">General</button>
+              <button class="ptb-tab active">Defects <span class="tab-count">4</span></button>
+              <button class="ptb-tab">History</button>
+            </div>
+          </div>
+          <div class="toolbar">
+            <div class="toolbar-toggle">
+              <button class="toggle-btn active">By Defect</button>
+              <button class="toggle-btn">By Item</button>
+            </div>
+            <div class="controls-row">
+              <span class="result-count">12</span>
+              <div class="search-input">
+                <span class="search-icon">⌕</span>
+                <input type="text" placeholder="Search&hellip;" readonly>
+              </div>
+              <button class="ctrl-btn">Priority ↓</button>
+              <button class="ctrl-btn kw-open">Filters ▾</button>
+            </div>
+            <div class="status-filter-row">
+              <button class="sfc active">All</button>
+              <button class="sfc sfc-live">Live <span class="sfc-n">8</span></button>
+              <button class="sfc sfc-closed">Closed <span class="sfc-n">4</span></button>
+            </div>
+          </div>
+          <div class="kw-popover">
+            <div class="kw-pop-search">
+              <span class="search-icon" style="color:var(--text-primary);">⌕</span>
+              <input type="text" value="fail" readonly style="font-weight:500;">
+            </div>
+            <div class="kw-pop-body">
+              <!-- Keywords: 3 matches -->
+              <div class="kw-pop-section">
+                <div class="kw-pop-slabel">Keywords <span class="kw-pop-count">3 of 25</span></div>
+                <div class="kw-pop-grid">
+                  <button class="kw-pop-chip">coating-failure</button>
+                  <button class="kw-pop-chip">electrical-fault</button>
+                  <button class="kw-pop-chip">seal-failure</button>
+                </div>
+              </div>
+              <!-- Classification: 0 matches — section still visible, proves cross-section search -->
+              <div class="kw-pop-section kw-pop-section--empty">
+                <div class="kw-pop-slabel">Classification <span class="kw-pop-count">0 of 5</span></div>
+                <div class="kw-pop-empty-note">No matches</div>
+              </div>
+            </div>
+          </div>
+          <div class="card-list card-scrim">
+            <div class="defect-card essential stub">
+              <div class="dc-top">
+                <span class="dc-id">DEF-00421/A</span><span class="dc-dot">&middot;</span>
+                <span class="dc-class essential">Essential</span>
+                <span class="dc-spacer"></span>
+                <span class="dc-status live">LIVE</span>
+              </div>
+              <div class="dc-title">Valve handle exhibits progressive misalignment during actuation</div>
+              <div class="dc-asset">CV-100-XF &middot; Crossfeed valve</div>
+              <div class="dc-footer">
+                <div class="dc-tags"><span class="dc-tag">mechanical-wear</span><span class="dc-tag">alignment</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- C4: Selected — chip strip visible, popover closed -->
+      <div class="panel-wrap">
+        <div class="panel-state-label">Selected &mdash; chips strip, popover closed</div>
+        <div class="panel">
+          <div class="ptb">
+            <span class="ptb-asset">FV-101 &middot; Crossfeed valve</span>
+            <div class="ptb-tabs">
+              <button class="ptb-tab">General</button>
+              <button class="ptb-tab active">Defects <span class="tab-count">4</span></button>
+              <button class="ptb-tab">History</button>
+            </div>
+          </div>
+          <div class="toolbar">
+            <div class="toolbar-toggle">
+              <button class="toggle-btn active">By Defect</button>
+              <button class="toggle-btn">By Item</button>
+            </div>
+            <div class="controls-row">
+              <span class="result-count">3</span>
+              <div class="search-input">
+                <span class="search-icon">⌕</span>
+                <input type="text" placeholder="Search&hellip;" readonly>
+              </div>
+              <button class="ctrl-btn">Priority ↓</button>
+              <button class="ctrl-btn kw-active">Filters (2) ▾</button>
+            </div>
+            <div class="status-filter-row">
+              <button class="sfc active">All</button>
+              <button class="sfc sfc-live">Live <span class="sfc-n">2</span></button>
+              <button class="sfc sfc-closed">Closed <span class="sfc-n">1</span></button>
+            </div>
+          </div>
+          <div class="active-kw-strip">
+            <span class="akw-label">KW:</span>
+            <span class="akw-chip">mechanical-wear <span class="akw-x">×</span></span>
+            <span class="akw-chip">alignment <span class="akw-x">×</span></span>
+          </div>
+          <div class="card-list">
+            <div class="defect-card essential">
+              <div class="dc-top">
+                <span class="dc-id">DEF-00421/A</span><span class="dc-dot">&middot;</span>
+                <span class="dc-class essential">Essential</span>
+                <span class="dc-spacer"></span>
+                <span class="dc-status live">LIVE</span>
+              </div>
+              <div class="dc-title">Valve handle exhibits progressive misalignment during actuation</div>
+              <div class="dc-asset">CV-100-XF &middot; Crossfeed valve</div>
+              <div class="dc-footer">
+                <div class="dc-tags"><span class="dc-tag">mechanical-wear</span><span class="dc-tag">alignment</span></div>
+              </div>
+            </div>
+            <div class="defect-card deferred">
+              <div class="dc-top">
+                <span class="dc-id">DEF-00451/A</span><span class="dc-dot">&middot;</span>
+                <span class="dc-class deferred">Deferred</span>
+                <span class="dc-spacer"></span>
+                <span class="dc-status closed">CLOSED</span>
+              </div>
+              <div class="dc-title">Actuator stem thread wear on quarter-turn isolation valve</div>
+              <div class="dc-asset">ISV-087-MN &middot; Isolation valve, feed line B</div>
+              <div class="dc-footer">
+                <div class="dc-tags"><span class="dc-tag">thread-wear</span><span class="dc-tag">actuator</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /panel-row -->
+  </section>
+
+  <hr class="div">
+
+  <!-- ════════════════════════════════════════
+       COMPLETE TOOLBAR PANEL
+  ════════════════════════════════════════ -->
+  <section class="pattern-section">
+    <div class="section-head">
+      <div>
+        <h2>Complete list-view panel &mdash; all chrome, default state</h2>
+        <p class="section-tradeoff">
+          All four toolbar controls in their resting state &nbsp;·&nbsp; Sample data from spec (DEF-00421/A, DEF-00389/B &times;2, DEF-00451/A) &nbsp;·&nbsp; Status badges per spec
+        </p>
+      </div>
+    </div>
+    <div class="panel-row">
+      <div class="panel-wrap">
+        <div class="panel panel--full">
+          <div class="ptb">
+            <span class="ptb-asset">FV-101 &middot; Crossfeed valve</span>
+            <div class="ptb-tabs">
+              <button class="ptb-tab">General</button>
+              <button class="ptb-tab active">Defects <span class="tab-count">4</span></button>
+              <button class="ptb-tab">History</button>
+            </div>
+          </div>
+          <div class="toolbar">
+            <div class="toolbar-toggle">
+              <button class="toggle-btn active">By Defect</button>
+              <button class="toggle-btn">By Item</button>
+            </div>
+            <div class="controls-row">
+              <span class="result-count">4</span>
+              <div class="search-input">
+                <span class="search-icon">⌕</span>
+                <input type="text" placeholder="Search defects&hellip;" readonly>
+              </div>
+              <button class="ctrl-btn">Priority ↓</button>
+              <button class="ctrl-btn">Filters ▾</button>
+            </div>
+            <div class="status-filter-row">
+              <button class="sfc active">All</button>
+              <button class="sfc sfc-live">Live <span class="sfc-n">2</span></button>
+              <button class="sfc sfc-closed">Closed <span class="sfc-n">1</span></button>
+            </div>
+          </div>
+          <div class="card-list grow">
+
+            <!-- DEF-00421/A · Essential · LIVE -->
+            <div class="defect-card essential">
+              <div class="dc-top">
+                <span class="dc-id">DEF-00421/A</span><span class="dc-dot">&middot;</span>
+                <span class="dc-class essential">Essential</span>
+                <span class="dc-spacer"></span>
+                <span class="dc-status live">LIVE</span>
+              </div>
+              <div class="dc-title">Valve handle exhibits progressive misalignment during actuation</div>
+              <div class="dc-asset">CV-100-XF &middot; Crossfeed valve</div>
+              <div class="dc-footer">
+                <div class="dc-tags">
+                  <span class="dc-tag">mechanical-wear</span>
+                  <span class="dc-tag">alignment</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- DEF-00389/B · Essential · LIVE · 2 other fittings -->
+            <div class="defect-card essential">
+              <div class="dc-top">
+                <span class="dc-id">DEF-00389/B</span><span class="dc-dot">&middot;</span>
+                <span class="dc-class essential">Essential</span>
+                <span class="dc-spacer"></span>
+                <span class="dc-status live">LIVE</span>
+              </div>
+              <div class="dc-title">Pressure seal degradation at primary outlet causing intermittent leakage</div>
+              <div class="dc-asset">CV-100-XF &middot; Crossfeed valve</div>
+              <div class="dc-footer">
+                <div class="dc-tags">
+                  <span class="dc-tag">corrosion</span>
+                  <span class="dc-tag">seal-failure</span>
+                </div>
+                <span class="dc-other">2 other fittings &rarr;</span>
+              </div>
+            </div>
+
+            <!-- DEF-00389/B (second) · Routine · SCHEDULED -->
+            <div class="defect-card routine">
+              <div class="dc-top">
+                <span class="dc-id">DEF-00389/B</span><span class="dc-dot">&middot;</span>
+                <span class="dc-class routine">Routine</span>
+                <span class="dc-spacer"></span>
+                <span class="dc-status scheduled">SCHEDULED</span>
+              </div>
+              <div class="dc-title">Pressure relief valve fails to reseat after actuation</div>
+              <div class="dc-asset">PRV-204-AK &middot; Relief valve, north header</div>
+              <div class="dc-footer">
+                <div class="dc-tags">
+                  <span class="dc-tag">valve-seating</span>
+                  <span class="dc-tag">pressure-loss</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- DEF-00451/A · Deferred · CLOSED -->
+            <div class="defect-card deferred">
+              <div class="dc-top">
+                <span class="dc-id">DEF-00451/A</span><span class="dc-dot">&middot;</span>
+                <span class="dc-class deferred">Deferred</span>
+                <span class="dc-spacer"></span>
+                <span class="dc-status closed">CLOSED</span>
+              </div>
+              <div class="dc-title">Actuator stem thread wear on quarter-turn isolation valve</div>
+              <div class="dc-asset">ISV-087-MN &middot; Isolation valve, feed line B</div>
+              <div class="dc-footer">
+                <div class="dc-tags">
+                  <span class="dc-tag">thread-wear</span>
+                  <span class="dc-tag">actuator</span>
+                  <span class="dc-tag">isolation</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /page -->
+</body>
+</html>
