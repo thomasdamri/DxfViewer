@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Defect Panels — Audit &amp; Corrected Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --sans: 'IBM Plex Sans', system-ui, sans-serif;
+    --mono: 'IBM Plex Mono', monospace;
+
+    --cl-critical:        #A32D2D; --cl-critical-bg:    #FCEBEB; --cl-critical-mid:    #A32D2D;
+    --cl-essential:       #854F0B; --cl-essential-bg:   #FAEEDA; --cl-essential-mid:   #BA7517;
+    --cl-routine:         #0C447C; --cl-routine-bg:     #E6F1FB; --cl-routine-mid:     #185FA5;
+    --cl-monitoring:      #085041; --cl-monitoring-bg:  #E1F5EE; --cl-monitoring-mid:  #0F6E56;
+    --cl-deferred:        #5F5E5A; --cl-deferred-bg:    #F1EFE8; --cl-deferred-mid:    #888780;
+
+    --color-background-primary:   #fff;
+    --color-background-secondary: #f6f5f2;
+    --color-background-tertiary:  #eeece8;
+    --color-text-primary:         #1a1a18;
+    --color-text-secondary:       #5f5e5a;
+    --color-text-tertiary:        #888780;
+    --color-border-tertiary:      rgba(0,0,0,0.12);
+    --color-border-secondary:     rgba(0,0,0,0.22);
+    --border-radius-lg:           12px;
+  }
+
+  body {
+    font-family: var(--sans);
+    background: var(--color-background-tertiary);
+    min-height: 100vh;
+    padding: 2rem 2rem 4rem;
+    color: var(--color-text-primary);
+  }
+
+  /* ── SECTION LABEL (per CLAUDE.md spec) ── */
+  .section-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-text-tertiary);
+  }
+
+  /* ── AUDIT BLOCK ── */
+  details.audit {
+    margin-bottom: 28px;
+    background: var(--color-background-primary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-lg);
+    padding: 0;
+    overflow: hidden;
+  }
+  details.audit summary {
+    cursor: pointer;
+    padding: 12px 16px;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 0.5px solid transparent;
+    transition: background 0.1s;
+  }
+  details.audit[open] summary {
+    border-bottom-color: var(--color-border-tertiary);
+  }
+  details.audit summary::-webkit-details-marker { display: none; }
+  details.audit summary::after {
+    content: '▸';
+    font-size: 10px;
+    color: var(--color-text-tertiary);
+    margin-left: auto;
+    transition: transform 0.15s;
+  }
+  details.audit[open] summary::after { transform: rotate(90deg); }
+
+  .audit-body {
+    padding: 20px 24px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .audit-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .audit-group-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-text-tertiary);
+    padding-bottom: 6px;
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+    margin-bottom: 2px;
+  }
+  .audit-item {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 8px 16px;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+  .audit-where {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--color-text-secondary);
+    padding-top: 1px;
+  }
+  .audit-panel-tag {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 1px 5px;
+    border-radius: 3px;
+    margin-bottom: 3px;
+  }
+  .tag-defect-list { background: #E6F1FB; color: #185FA5; }
+  .tag-history     { background: #FAEEDA; color: #854F0B; }
+  .tag-fittings    { background: #E1F5EE; color: #085041; }
+  .tag-detail      { background: #F1EFE8; color: #5F5E5A; }
+  .tag-both        { background: #F6F3FF; color: #5B3FA6; }
+  .audit-text { color: var(--color-text-secondary); }
+  .audit-text strong { color: var(--color-text-primary); font-weight: 500; }
+  .audit-severity-high { border-left: 2px solid var(--cl-critical-mid); padding-left: 8px; }
+  .audit-severity-med  { border-left: 2px solid var(--cl-essential-mid); padding-left: 8px; }
+  .audit-severity-low  { border-left: 2px solid var(--cl-deferred-mid); padding-left: 8px; }
+
+  /* ── CHANGE SUMMARY ── */
+  .change-summary {
+    margin-bottom: 28px;
+    background: var(--color-background-primary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-lg);
+    padding: 16px 20px 20px;
+  }
+  .cs-header {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-text-tertiary);
+    padding-bottom: 10px;
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+    margin-bottom: 12px;
+  }
+  .cs-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .cs-item {
+    display: grid;
+    grid-template-columns: 22px 1fr;
+    gap: 0 10px;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+  .cs-num {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--color-text-tertiary);
+    padding-top: 2px;
+  }
+  .cs-rule { font-weight: 500; color: var(--color-text-primary); }
+  .cs-why  { color: var(--color-text-secondary); }
+  .cs-scope {
+    font-family: var(--mono);
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 1px 5px;
+    border-radius: 3px;
+    margin-left: 6px;
+    vertical-align: middle;
+    position: relative;
+    top: -1px;
+  }
+
+  /* ── STAGE (side-by-side layout) ── */
+  .stage {
+    display: flex;
+    gap: 28px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+  .panel-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .panel-wrap-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-text-tertiary);
+  }
+
+  /* ── PANEL FRAME ── */
+  .panel-frame {
+    width: 360px;
+    background: var(--color-background-primary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── PANEL CHROME: title bar ── */
+  .pc-titlebar {
+    padding: 10px 14px 0;
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+    flex-shrink: 0;
+  }
+  .pc-back {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    color: var(--cl-routine-mid);
+    cursor: pointer;
+    margin-bottom: 6px;
+    font-family: var(--sans);
+  }
+  .pc-back svg { width: 12px; height: 12px; flex-shrink: 0; }
+  .pc-panel-name {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-text-tertiary);
+    margin-bottom: 8px;
+  }
+
+  /* ── TOOLBAR ── */
+  .toolbar {
+    padding: 8px 14px;
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  /* Row 1: By Defect / By Item toggle */
+  .view-toggle { display: flex; width: 100%; }
+  .vt-btn {
+    flex: 1;
+    font-size: 11px;
+    font-family: var(--sans);
+    padding: 4px 0;
+    border: 0.5px solid var(--color-border-tertiary);
+    color: var(--color-text-secondary);
+    background: var(--color-background-secondary);
+    cursor: pointer;
+    text-align: center;
+  }
+  .vt-btn:first-child { border-radius: 5px 0 0 5px; border-right: none; }
+  .vt-btn:last-child  { border-radius: 0 5px 5px 0; }
+  .vt-btn.active {
+    background: var(--color-background-primary);
+    color: var(--color-text-primary);
+    font-weight: 500;
+  }
+
+  /* Row 2: count + sort + filters */
+  .toolbar-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .result-count {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--color-text-tertiary);
+    flex: 1;
+  }
+  .sort-btn, .filter-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-family: var(--sans);
+    color: var(--color-text-secondary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: 5px;
+    padding: 3px 8px;
+    background: var(--color-background-primary);
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .filter-btn.active {
+    border-color: var(--color-border-secondary);
+    color: var(--color-text-primary);
+    font-weight: 500;
+  }
+  .filter-count-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: var(--cl-routine-mid);
+    color: #fff;
+    font-family: var(--mono);
+    font-size: 9px;
+    font-weight: 500;
+    flex-shrink: 0;
+  }
+
+  /* Row 3: search */
+  .search-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--color-background-secondary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: 6px;
+    padding: 0 10px;
+    height: 28px;
+  }
+  .search-icon { color: var(--color-text-tertiary); font-size: 13px; line-height: 1; }
+  .search-row input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 12px;
+    font-family: var(--sans);
+    color: var(--color-text-primary);
+    outline: none;
+  }
+  .search-row input::placeholder { color: var(--color-text-tertiary); }
+
+  /* Row 4: stable filter chip row */
+  /* Always present — status chips left, keyword chips right, no layout shift */
+  .filter-chip-row {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-wrap: wrap;
+    min-height: 22px; /* reserves space even when empty */
+  }
+  .chip {
+    font-size: 10px;
+    font-family: var(--mono);
+    padding: 2px 7px;
+    border-radius: 10px;
+    border: 0.5px solid var(--color-border-tertiary);
+    background: var(--color-background-secondary);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.1s, color 0.1s;
+  }
+  .chip.active {
+    background: var(--color-background-primary);
+    color: var(--color-text-primary);
+    border-color: var(--color-border-secondary);
+    font-weight: 500;
+  }
+  .chip.keyword {
+    background: #EEF3FB;
+    color: var(--cl-routine);
+    border-color: #B5D4F4;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .chip-dismiss {
+    font-size: 10px;
+    opacity: 0.6;
+    line-height: 1;
+  }
+  .chip-divider {
+    width: 0.5px;
+    height: 14px;
+    background: var(--color-border-tertiary);
+    flex-shrink: 0;
+  }
+  .clear-all-btn {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--cl-routine-mid);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin-left: auto;
+    white-space: nowrap;
+  }
+
+  /* ── DEFECT LIST ── */
+  .defect-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px 0;
+  }
+
+  /* ── DEFECT CARD ── */
+  .defect-card {
+    margin: 0 10px 6px;
+    background: var(--color-background-primary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-lg);
+    border-left-width: 3px;
+    border-left-style: solid;
+    border-left-color: transparent;
+    padding: 10px 12px 10px 11px;
+    cursor: pointer;
+  }
+  .defect-card:hover { border-color: var(--color-border-secondary); border-left-width: 3px; }
+  .defect-card.essential  { border-left-color: var(--cl-essential-mid); }
+  .defect-card.routine    { border-left-color: var(--cl-routine-mid); }
+  .defect-card.deferred   { border-left-color: var(--cl-deferred-mid); }
+  .defect-card.critical   { border-left-color: var(--cl-critical-mid); }
+  .defect-card.monitoring { border-left-color: var(--cl-monitoring-mid); }
+
+  /* Card top row: id · classification badge · spacer · status badge */
+  .dc-top {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 5px;
+  }
+  .dc-id {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--color-text-secondary);
+    white-space: nowrap;
+  }
+  /* Classification badge */
+  .dc-class {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 500;
+    padding: 1px 5px;
+    border-radius: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+  .dc-class.essential  { background: var(--cl-essential-bg);  color: var(--cl-essential); }
+  .dc-class.routine    { background: var(--cl-routine-bg);    color: var(--cl-routine); }
+  .dc-class.deferred   { background: var(--cl-deferred-bg);   color: var(--cl-deferred); }
+  .dc-class.critical   { background: var(--cl-critical-bg);   color: var(--cl-critical); }
+  .dc-class.monitoring { background: var(--cl-monitoring-bg); color: var(--cl-monitoring); }
+
+  .dc-spacer { flex: 1; }
+
+  /* Status badge — pill shape for ALL three statuses */
+  .status-badge {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 500;
+    padding: 1px 7px;
+    border-radius: 10px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .status-live      { background: #FCEBEB; color: #A32D2D; }
+  .status-scheduled { background: #E6F1FB; color: #185FA5; }
+  .status-closed    { background: #F1EFE8; color: #888780; border: 0.5px solid rgba(0,0,0,0.12); }
+
+  .dc-title {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+    line-height: 1.4;
+    margin-bottom: 4px;
+  }
+  .dc-asset {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--color-text-secondary);
+    margin-bottom: 6px;
+  }
+  .dc-footer {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .dc-tags {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    flex: 1;
+    min-width: 0;
+  }
+  .dc-tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--color-text-tertiary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: 3px;
+    padding: 1px 5px;
+    background: var(--color-background-secondary);
+    white-space: nowrap;
+  }
+  .dc-other {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--cl-routine-mid);
+    white-space: nowrap;
+    margin-left: auto;
+  }
+
+  /* ── SECTION DIVIDER inside list ── */
+  .list-section-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-text-tertiary);
+    padding: 4px 14px 4px;
+    margin-top: 4px;
+  }
+</style>
+</head>
+<body>
+
+<!--
+=============================================================================
+  PART 1 — AUDIT
+  Review of all four screenshots against CLAUDE.md spec and cross-panel
+  consistency. Findings grouped by category.
+=============================================================================
+-->
+<details class="audit">
+  <summary>
+    <span class="section-label">Part 1 — UI Audit</span>
+    <span style="font-size:11px; color:var(--color-text-tertiary); margin-left:8px;">
+      14 findings across 4 panels
+    </span>
+  </summary>
+
+  <div class="audit-body">
+
+    <div class="audit-group">
+      <div class="audit-group-label">Consistency</div>
+
+      <div class="audit-item audit-severity-high">
+        <div class="audit-where">
+          <div class="audit-panel-tag tag-defect-list">Defect List</div><br>
+          Search placeholder
+        </div>
+        <div class="audit-text">
+          <strong>Wrong placeholder text.</strong> Reads "Search fittings…" — this is a defect panel.
+          The History panel correctly says "Search defects…". Causes momentary confusion about what is being searched.
+        </div>
+      </div>
+
+      <div class="audit-item audit-severity-high">
+        <div class="audit-where">
+          <div class="audit-panel-tag tag-defect-list">Defect List</div><br>
+          LIVE status badge
+        </div>
+        <div class="audit-text">
+          <strong>LIVE renders as plain text, not a pill.</strong> SCHEDULED and CLOSED are correctly
+          pill-shaped with tinted backgrounds. LIVE appears as raw right-aligned red text, breaking the
+          badge system. All three statuses must share the same pill component.
+        </div>
+      </div>
+
+      <div class="audit-item audit-severity-high">
+        <div class="audit-where">
+          <div class="audit-panel-tag tag-both">Both defect panels</div><br>
+          Classification labels
+        </div>
+        <div class="audit-text">
+          <strong>Classification labels are unstyled plain text.</strong> "Essential", "Routine", "Deferred"
+          appear in the default text colour with no badge. Per spec they must be coloured mono badges using
+          <code>--cl-*</code> variables — coloured text on a tinted background. This is the primary
+          visual triage signal; its absence makes all cards look identical.
+        </div>
+      </div>
+
+      <div class="audit-item audit-severity-high">
+        <div class="audit-where">
+          <div class="audit-panel-tag tag-both">Both defect panels</div><br>
+          Card left border
+        </div>
+        <div class="audit-text">
+          <strong>3 px classification border absent from all cards.</strong> Per spec the left border in
+          <code>--cl-*-mid</code> is the second visual signal of classification category. Without it,
+          combined with unstyled labels, the entire triage colour system is non-functional.
+        </div>
+      </div>
+
+      <div class="audit-item audit-severity-med">
+        <div class="audit-where">
+          <div class="audit-panel-tag tag-history">Defect History</div><br>
+          Result count position
+        </div>
+        <div class="audit-text">
+          <strong>Count "6 defects" floats right-aligned on the toggle row.</strong> In the Defect List
+          panel, "4 results" occupies its own line above the toolbar. These must be consistent — same
+          position, same format, same font.
+        </div>
+      </div>
+
+      <div class="audit-item audit-severity-med">
+        <div class="audit-where">
+          <div class="audit-panel-tag tag-history">Defect History</div><br>
+          Filter control pattern
+        </div>
+        <div class="audit-text">
+          <strong>Filter controls differ from the Defect List panel.</strong> History shows
+          "Last 12 months ▼" and "Priority ↓" as separate buttons. The Defect List uses a unified
+          "Filters ▼" button. Same content type, two different filter patterns.
+        </div>
+      </div>
+
+      <div class="audit-item audit-severity-low">
+        <div class="audit-where">
+          <div class="audit-panel-tag tag-fittings">Fittings List</div><br>
+          Item tag numbers
+        </div>
+        <div class="audit-text">
+          <strong>Item numbers (001, 002…) rendered in the default sans font.</strong> These are
+          identifiers and should use IBM Plex Mono — consistent with how all IDs are treated across the system.
+        </div>
+      </div>
+    </div>
+
+    <div class="audit-group">
+      <div class="audit-group-label">Typography</div>
+
+      <div class="audit-item audit-severity-high">
+        <div class="audit-where">
+          <div class="audit-panel-tag tag-detail">Fitting Detail</div><br>
+          Section labels
+        </div>
+        <div class="audit-text">
+          <strong>"Identification" and "Lifecycle" labels violate spec.</strong> They render in blue,
+          proportional font — styled as interactive section headings. Per CLAUDE.md they must be:
+          IBM Plex Mono, 10 px, uppercase, letter-spaced, tertiary muted colour. The blue implies
+          interactivity where none exists.
+        </div>
+      </div>
+
+      <div class="audit-item audit-severity-med">
+        <div class="audit-where">
+          <div class="audit-panel-tag tag-both">Both defect panels</div><br>
+          Classification label font
+        </div>
+        <div class="audit-text">
+          <strong>Classification text not monospaced.</strong> "Essential / Routine / Deferred"
+          in the card header row uses proportional sans. Per spec all classification labels should
+          use IBM Plex Mono.
+        </div>
+      </div>
+    </div>
+
+    <div class="audit-group">
+      <div class="audit-group-label">Information Hierarchy</div>
+
+      <div class="audit-item audit-severity-high">
+        <div class="audit-where">
+          <div class="audit-panel-tag tag-both">Both defect panels</div><br>
+          Triage colour system
+        </div>
+        <div class="audit-text">
+          <strong>Classification colour system is entirely invisible.</strong> The left border +
+          coloured badge together are the primary differentiator between triage categories. Both are
+          absent. A user cannot distinguish an Essential LIVE defect from a Deferred CLOSED one at a glance.
+        </div>
+      </div>
+
+      <div class="audit-item audit-severity-med">
+        <div class="audit-where">
+          <div class="audit-panel-tag tag-defect-list">Defect List</div><br>
+          Keyword filter row
+        </div>
+        <div class="audit-text">
+          <strong>Active keyword chips cause a layout shift.</strong> When filters are applied, a new
+          "Keywords: …" row appears below the toolbar, pushing all card content down. Prefer a stable
+          row that is always present — status chips always occupy it, keyword chips join when active.
+        </div>
+      </div>
+    </div>
+
+    <div class="audit-group">
+      <div class="audit-group-label">Filter &amp; Search UX</div>
+
+      <div class="audit-item audit-severity-med">
+        <div class="audit-where">
+          <div class="audit-panel-tag tag-defect-list">Defect List</div><br>
+          No "clear all" control
+        </div>
+        <div class="audit-text">
+          <strong>No bulk filter clear action.</strong> Each chip has an individual ×, but there is
+          no way to clear all active filters at once. A "Clear filters" link should appear in the chip row
+          when any keyword filter is active.
+        </div>
+      </div>
+    </div>
+
+    <div class="audit-group">
+      <div class="audit-group-label">Missing &amp; Unclear</div>
+
+      <div class="audit-item audit-severity-med">
+        <div class="audit-where">
+          <div class="audit-panel-tag tag-defect-list">Defect List</div><br>
+          Back navigation
+        </div>
+        <div class="audit-text">
+          <strong>No way to return to the Fittings list.</strong> The Fitting Detail panel has a ← back
+          arrow — this pattern should be consistent. The Defect List panel, shown in isolation, has no
+          exit path.
+        </div>
+      </div>
+
+      <div class="audit-item audit-severity-low">
+        <div class="audit-where">
+          <div class="audit-panel-tag tag-history">Defect History</div><br>
+          Entry point unclear
+        </div>
+        <div class="audit-text">
+          <strong>No "History" tab visible in the Fitting Detail panel.</strong> The detail shows
+          General / Defects / Other. It is not clear how the Defect History view is reached.
+          If it is a sub-view of "Other", this should be communicated.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</details>
+
+<!-- ── CHANGE SUMMARY ── -->
+<div class="change-summary">
+  <div class="cs-header">Changes applied in mockup below</div>
+  <ol class="cs-list">
+    <li class="cs-item">
+      <span class="cs-num">01</span>
+      <div>
+        <span class="cs-rule">Search placeholder corrected to "Search defects…"</span>
+        <span class="cs-scope tag-defect-list">Defect List</span><br>
+        <span class="cs-why">Wrong scope name caused confusion about what was being searched.</span>
+      </div>
+    </li>
+    <li class="cs-item">
+      <span class="cs-num">02</span>
+      <div>
+        <span class="cs-rule">LIVE badge made pill-shaped</span>
+        <span class="cs-scope tag-both">Both panels</span><br>
+        <span class="cs-why">LIVE was plain text; SCHEDULED/CLOSED were already pills. Unified to one component for all three statuses.</span>
+      </div>
+    </li>
+    <li class="cs-item">
+      <span class="cs-num">03</span>
+      <div>
+        <span class="cs-rule">Classification labels styled as coloured mono badges</span>
+        <span class="cs-scope tag-both">Both panels</span><br>
+        <span class="cs-why">Labels were unstyled plain text. Now use <code>--cl-*-bg</code> / <code>--cl-*</code> variables per spec.</span>
+      </div>
+    </li>
+    <li class="cs-item">
+      <span class="cs-num">04</span>
+      <div>
+        <span class="cs-rule">3 px left border added to all cards</span>
+        <span class="cs-scope tag-both">Both panels</span><br>
+        <span class="cs-why">Border was absent. Now uses <code>--cl-*-mid</code> per spec — restores the primary triage visual signal.</span>
+      </div>
+    </li>
+    <li class="cs-item">
+      <span class="cs-num">05</span>
+      <div>
+        <span class="cs-rule">Result count moved to its own toolbar row</span>
+        <span class="cs-scope tag-history">Defect History</span><br>
+        <span class="cs-why">Count was right-aligned on the toggle row, inconsistent with the Defect List panel. Now both panels share the same structure.</span>
+      </div>
+    </li>
+    <li class="cs-item">
+      <span class="cs-num">06</span>
+      <div>
+        <span class="cs-rule">Filter controls unified to single "Filters ▼" button</span>
+        <span class="cs-scope tag-history">Defect History</span><br>
+        <span class="cs-why">History used separate "Last 12 months" + "Priority" buttons. Now matches the Defect List panel's single Filters control.</span>
+      </div>
+    </li>
+    <li class="cs-item">
+      <span class="cs-num">07</span>
+      <div>
+        <span class="cs-rule">Filter chip row made stable — no layout shift</span>
+        <span class="cs-scope tag-defect-list">Defect List</span><br>
+        <span class="cs-why">Status chips (All / Live / Closed) always occupy this row. Active keyword chips join in the same row. No content displacement on filter activation.</span>
+      </div>
+    </li>
+    <li class="cs-item">
+      <span class="cs-num">08</span>
+      <div>
+        <span class="cs-rule">"Clear filters" action added to chip row</span>
+        <span class="cs-scope tag-defect-list">Defect List</span><br>
+        <span class="cs-why">No bulk clear existed. Now appears right-aligned in the chip row whenever keyword filters are active.</span>
+      </div>
+    </li>
+  </ol>
+</div>
+
+<!-- ── SIDE-BY-SIDE CORRECTED PANELS ── -->
+<div class="stage">
+
+  <!-- ═══════════════════════════════════
+       PANEL 1 — Defect List (corrected)
+       Shown in "2 active keyword filters" state to demonstrate fixes 7 + 8
+  ═══════════════════════════════════ -->
+  <div class="panel-wrap">
+    <div class="panel-wrap-label">Defect List Panel — corrected</div>
+    <div class="panel-frame">
+
+      <!-- Toolbar -->
+      <div class="toolbar">
+
+        <!-- Row 1: By Defect / By Item toggle -->
+        <div class="view-toggle">
+          <button class="vt-btn active">By Defect</button>
+          <button class="vt-btn">By Item</button>
+        </div>
+
+        <!-- Row 2: count · sort · filters (fix 05 structure; fix 06 button) -->
+        <div class="toolbar-row">
+          <span class="result-count">3 results</span>
+          <button class="sort-btn">Recent&thinsp;↓</button>
+          <button class="filter-btn active">
+            Filters
+            <span class="filter-count-badge">2</span>
+          </button>
+        </div>
+
+        <!-- Row 3: search input (fix 01: correct placeholder) -->
+        <div class="search-row">
+          <span class="search-icon">⌕</span>
+          <input type="text" placeholder="Search defects…">
+        </div>
+
+        <!-- Row 4: stable chip row (fix 07 + 08)
+             Status chips always present. Keyword chips join when active.
+             "Clear filters" appears right-aligned when any keyword is active. -->
+        <div class="filter-chip-row">
+          <span class="chip">All</span>
+          <span class="chip active">Live&thinsp;2</span>
+          <span class="chip">Closed&thinsp;1</span>
+          <span class="chip-divider"></span>
+          <span class="chip keyword">debris<span class="chip-dismiss">×</span></span>
+          <span class="chip keyword">accessibility<span class="chip-dismiss">×</span></span>
+          <button class="clear-all-btn">Clear filters</button>
+        </div>
+      </div>
+
+      <!-- Defect list -->
+      <div class="defect-list">
+
+        <!-- Card 1: Essential / LIVE (fix 02: LIVE pill; fix 03: badge; fix 04: border) -->
+        <div class="defect-card essential">
+          <div class="dc-top">
+            <span class="dc-id">DEF-00421/A</span>
+            <span class="dc-class essential">Essential</span>
+            <span class="dc-spacer"></span>
+            <span class="status-badge status-live">LIVE</span>
+          </div>
+          <div class="dc-title">Valve handle exhibits progressive misalignment during actuation</div>
+          <div class="dc-asset">CV-100-XF&thinsp;·&thinsp;Crossfeed valve</div>
+          <div class="dc-footer">
+            <div class="dc-tags">
+              <span class="dc-tag">mechanical-wear</span>
+              <span class="dc-tag">alignment</span>
+            </div>
+            <span class="dc-other">4 other fittings →</span>
+          </div>
+        </div>
+
+        <!-- Card 2: Essential / LIVE -->
+        <div class="defect-card essential">
+          <div class="dc-top">
+            <span class="dc-id">DEF-00389/B</span>
+            <span class="dc-class essential">Essential</span>
+            <span class="dc-spacer"></span>
+            <span class="status-badge status-live">LIVE</span>
+          </div>
+          <div class="dc-title">Pressure seal degradation at primary outlet causing intermittent leakage</div>
+          <div class="dc-asset">CV-100-XF&thinsp;·&thinsp;Crossfeed valve</div>
+          <div class="dc-footer">
+            <div class="dc-tags">
+              <span class="dc-tag">corrosion</span>
+              <span class="dc-tag">seal-failure</span>
+            </div>
+            <span class="dc-other">2 other fittings →</span>
+          </div>
+        </div>
+
+        <!-- Card 3: Routine / SCHEDULED (fix 02: pill consistent; fix 03/04) -->
+        <div class="defect-card routine">
+          <div class="dc-top">
+            <span class="dc-id">DEF-00389/B</span>
+            <span class="dc-class routine">Routine</span>
+            <span class="dc-spacer"></span>
+            <span class="status-badge status-scheduled">SCHEDULED</span>
+          </div>
+          <div class="dc-title">Pressure relief valve fails to reseat after actuation</div>
+          <div class="dc-asset">PRV-204-AK&thinsp;·&thinsp;Relief valve, north header</div>
+          <div class="dc-footer">
+            <div class="dc-tags">
+              <span class="dc-tag">valve-seating</span>
+              <span class="dc-tag">pressure-loss</span>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /defect-list -->
+    </div><!-- /panel-frame -->
+  </div><!-- /panel-wrap -->
+
+
+  <!-- ═══════════════════════════════════
+       PANEL 2 — Defect History (corrected)
+       Shown in default state, structure aligned with Defect List
+  ═══════════════════════════════════ -->
+  <div class="panel-wrap">
+    <div class="panel-wrap-label">Defect History Panel — corrected</div>
+    <div class="panel-frame">
+
+      <!-- Panel title bar -->
+      <div class="pc-titlebar">
+        <div class="pc-panel-name">Defect History</div>
+      </div>
+
+      <!-- Toolbar — now mirrors Defect List structure exactly (fixes 05, 06) -->
+      <div class="toolbar">
+
+        <!-- Row 1: toggle (same as Defect List) -->
+        <div class="view-toggle">
+          <button class="vt-btn active">By Defect</button>
+          <button class="vt-btn">By Item</button>
+        </div>
+
+        <!-- Row 2: count · sort · filters
+             (fix 05: count on own line, not on toggle row)
+             (fix 06: unified Filters button, not "Last 12 months" + "Priority") -->
+        <div class="toolbar-row">
+          <span class="result-count">6 defects</span>
+          <button class="sort-btn">Priority&thinsp;↓</button>
+          <button class="filter-btn">Filters</button>
+        </div>
+
+        <!-- Row 3: search (correct placeholder) -->
+        <div class="search-row">
+          <span class="search-icon">⌕</span>
+          <input type="text" placeholder="Search defects…">
+        </div>
+
+        <!-- Row 4: stable chip row — status chips always present (fix 07) -->
+        <div class="filter-chip-row">
+          <span class="chip active">All&thinsp;6</span>
+          <span class="chip">Live&thinsp;2</span>
+          <span class="chip">Scheduled&thinsp;1</span>
+          <span class="chip">Closed&thinsp;3</span>
+        </div>
+      </div>
+
+      <!-- Defect list — all three statuses with corrected badges and borders -->
+      <div class="defect-list">
+
+        <!-- Card 1: Essential / LIVE -->
+        <div class="defect-card essential">
+          <div class="dc-top">
+            <span class="dc-id">DEF-00421/A</span>
+            <span class="dc-class essential">Essential</span>
+            <span class="dc-spacer"></span>
+            <span class="status-badge status-live">LIVE</span>
+          </div>
+          <div class="dc-title">Valve handle exhibits progressive misalignment during actuation</div>
+          <div class="dc-asset">CV-100-XF&thinsp;·&thinsp;Crossfeed valve</div>
+          <div class="dc-footer">
+            <div class="dc-tags">
+              <span class="dc-tag">mechanical-wear</span>
+              <span class="dc-tag">alignment</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2: Routine / SCHEDULED -->
+        <div class="defect-card routine">
+          <div class="dc-top">
+            <span class="dc-id">DEF-00389/B</span>
+            <span class="dc-class routine">Routine</span>
+            <span class="dc-spacer"></span>
+            <span class="status-badge status-scheduled">SCHEDULED</span>
+          </div>
+          <div class="dc-title">Pressure relief valve fails to reseat after actuation</div>
+          <div class="dc-asset">PRV-204-AK&thinsp;·&thinsp;Relief valve, north header</div>
+          <div class="dc-footer">
+            <div class="dc-tags">
+              <span class="dc-tag">valve-seating</span>
+              <span class="dc-tag">pressure-loss</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3: Deferred / CLOSED -->
+        <div class="defect-card deferred">
+          <div class="dc-top">
+            <span class="dc-id">DEF-00451/A</span>
+            <span class="dc-class deferred">Deferred</span>
+            <span class="dc-spacer"></span>
+            <span class="status-badge status-closed">CLOSED</span>
+          </div>
+          <div class="dc-title">Actuator stem thread wear on quarter-turn isolation valve</div>
+          <div class="dc-asset">ISV-087-MN&thinsp;·&thinsp;Isolation valve, feed line B</div>
+          <div class="dc-footer">
+            <div class="dc-tags">
+              <span class="dc-tag">thread-wear</span>
+              <span class="dc-tag">actuator</span>
+              <span class="dc-tag">isolation</span>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /defect-list -->
+    </div><!-- /panel-frame -->
+  </div><!-- /panel-wrap -->
+
+</div><!-- /stage -->
+
+</body>
+</html>
